@@ -17,8 +17,9 @@
     .handwriting {
       font-family: 'Patrick Hand', cursive;
     }
-    .mono-code {
+    .math-grid {
       font-family: 'Fira Code', monospace;
+      letter-spacing: 0.15em;
     }
     .notebook-paper {
       background: #ffffff;
@@ -32,13 +33,6 @@
       background: #1e3a2f;
       border: 10px solid #854d0e;
       box-shadow: inset 0 0 40px rgba(0,0,0,0.6), 0 10px 25px rgba(0,0,0,0.25);
-    }
-    @keyframes pulse-subtle {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-    }
-    .pulse-card {
-      animation: pulse-subtle 2.5s infinite ease-in-out;
     }
     canvas#confetti-canvas {
       position: fixed;
@@ -54,8 +48,8 @@
 <body class="text-slate-800 antialiased selection:bg-amber-200">
   <canvas id="confetti-canvas"></canvas>
 
-  <!-- Top Navigation Header -->
-  <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-amber-200 shadow-sm">
+  <!-- Navigation Header -->
+  <header class="bg-white/95 backdrop-blur-md sticky top-0 z-40 border-b border-amber-200 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
         <span class="text-3xl filter drop-shadow">🔍</span>
@@ -64,7 +58,7 @@
             <h1 class="text-xl sm:text-2xl font-black text-amber-700 tracking-tight">THÁM TỬ SOI LỖI TOÁN LỚP 5</h1>
             <span class="bg-gradient-to-r from-red-500 to-amber-500 text-white text-xs font-black px-2.5 py-0.5 rounded-full shadow-sm">LỚP THẦY HUY</span>
           </div>
-          <p class="text-xs text-slate-500 font-semibold">Phát hiện bẫy: Số thập phân • Tam giác • Hình tròn • Hình thang</p>
+          <p class="text-xs text-slate-500 font-semibold">Đặc trị: Đặt tính STP • Đơn vị diện tích • Tam giác • Hình tròn • Hình thang</p>
         </div>
       </div>
 
@@ -81,7 +75,7 @@
 
   <main class="max-w-6xl mx-auto px-4 py-6">
     <!-- Active Detective Profile Bar -->
-    <div id="active-detective-bar" class="mb-6 bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+    <div id="active-detective-bar" class="mb-5 bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
         <div id="detective-avatar" class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl font-black shadow-inner">
           🕵️‍♂️
@@ -89,8 +83,7 @@
         <div>
           <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">Thám tử nhí trực ban</div>
           <div id="detective-name" class="text-lg font-black text-slate-800 flex items-center gap-2">
-            Đang chờ chọn thám tử...
-            <button id="btn-change-detective" class="text-xs text-sky-600 underline font-semibold ml-2 hover:text-sky-800">Đổi bạn khác</button>
+            Đang tải...
           </div>
         </div>
       </div>
@@ -115,30 +108,31 @@
 
     <!-- Topic Filter Bar -->
     <div class="mb-6 flex flex-wrap items-center gap-2">
-      <span class="text-xs font-bold text-slate-500 mr-2">Chuyên đề soi lỗi:</span>
-      <button class="filter-btn active px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition shadow-sm" data-filter="all">Tất cả bài tập (12)</button>
-      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="decimal">Số thập phân</button>
-      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="triangle">Diện tích tam giác</button>
-      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="circle">Hình tròn (C & S)</button>
-      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="trapezoid">Diện tích hình thang</button>
+      <span class="text-xs font-bold text-slate-500 mr-2">Chuyên đề:</span>
+      <button class="filter-btn active px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition shadow-sm" data-filter="all">Tất cả vụ án</button>
+      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="decimal_calc">🧮 Đặt tính STP (+ - × :)</button>
+      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="area_unit">📏 Đổi đơn vị diện tích</button>
+      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="triangle">📐 Diện tích tam giác</button>
+      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="circle">⭕ Chu vi & Diện tích tròn</button>
+      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="trapezoid">🧱 Diện tích hình thang</button>
     </div>
 
     <!-- MAIN GAME ARENA -->
-    <div id="game-arena" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
-      <!-- Left Column: Student Exam Paper (Vụ Án Cần Soi) -->
+      <!-- Left Column: Student Exam Paper -->
       <section class="lg:col-span-7 bg-white rounded-3xl p-6 shadow-md border-2 border-amber-200 relative overflow-hidden">
-        <!-- Paper Top Header -->
+        <!-- Paper Header -->
         <div class="flex items-center justify-between pb-4 border-b-2 border-dashed border-amber-300 mb-4">
           <div class="flex items-center gap-3">
             <span class="text-2xl" id="suspect-avatar">📝</span>
             <div>
-              <div class="text-xs font-bold text-amber-700 uppercase tracking-wider">Bài làm cần kiểm tra</div>
-              <div id="suspect-student" class="text-base font-black text-slate-800">Bạn: Minh Khang</div>
+              <div class="text-xs font-bold text-amber-700 uppercase tracking-wider">Bài làm của học sinh</div>
+              <div id="suspect-student" class="text-base font-black text-slate-800">Bạn: ...</div>
             </div>
           </div>
           <span id="case-category-badge" class="px-3 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">
-            Số thập phân
+            Đặt tính STP
           </span>
         </div>
 
@@ -152,10 +146,10 @@
           </div>
         </div>
 
-        <!-- Instructions Step 1 -->
+        <!-- Step 1 Instruction -->
         <div class="flex items-center justify-between mb-3">
           <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">
-            👉 BƯỚC 1: Bấm vào dòng chứa lỗi sai dưới đây
+            👉 BƯỚC 1: Bấm vào dòng chứa lỗi sai
           </span>
           <span id="selected-step-indicator" class="text-xs font-black text-rose-600 hidden">
             Đã chọn dòng <span id="indicator-num">1</span>
@@ -163,9 +157,7 @@
         </div>
 
         <!-- Interactive Student Solution Lines -->
-        <div id="solution-lines-container" class="space-y-3 notebook-paper p-4 rounded-2xl border border-slate-200 shadow-inner">
-          <!-- Dynamic Steps rendered here -->
-        </div>
+        <div id="solution-lines-container" class="space-y-3 notebook-paper p-4 rounded-2xl border border-slate-200 shadow-inner"></div>
 
         <!-- Confirm Step 1 Button -->
         <div class="mt-5 flex justify-end">
@@ -179,7 +171,7 @@
       <!-- Right Column: Chalkboard & Tagging Step 2 -->
       <section class="lg:col-span-5 space-y-6">
         
-        <!-- Step 2 Box: Error Tagging (Bắt Bệnh Nhóm Lỗi) -->
+        <!-- Step 2: Tagging Panel -->
         <div id="tagging-panel" class="bg-white rounded-3xl p-5 shadow-md border-2 border-slate-200 transition-all opacity-50 pointer-events-none">
           <div class="flex items-center gap-2 mb-3">
             <span class="text-xl">🏷️</span>
@@ -187,33 +179,28 @@
           </div>
           <p class="text-xs text-slate-500 mb-4 font-semibold">Theo em, bạn ấy đã mắc phải loại bẫy nào của Thầy Huy?</p>
 
-          <div class="grid grid-cols-1 gap-2.5" id="tag-buttons-container">
-            <button class="error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="quen_chia_2">
+          <div class="grid grid-cols-1 gap-2" id="tag-buttons-container">
+            <button class="error-tag-btn p-2.5 rounded-xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="dat_tinh_lech">
+              <span class="flex items-center gap-2"><span>📐</span> Đặt tính lệch cột / Quên dấu phẩy thẳng hàng</span>
+            </button>
+            <button class="error-tag-btn p-2.5 rounded-xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="tinh_toan_phay">
+              <span class="flex items-center gap-2"><span>🧮</span> Tính toán sai / Quên mượn số 0 khuyết / Thiếu chữ số phẩy</span>
+            </button>
+            <button class="error-tag-btn p-2.5 rounded-xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="doi_don_vi">
+              <span class="flex items-center gap-2"><span>📏</span> Nhầm đổi đơn vị diện tích (quên 100 lần)</span>
+            </button>
+            <button class="error-tag-btn p-2.5 rounded-xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="quen_chia_2">
               <span class="flex items-center gap-2"><span>⚠️</span> Quên chia 2 (Tam giác / Hình thang)</span>
-              <span class="text-xs opacity-50">#1</span>
             </button>
-            <button class="error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="chep_nham_so">
-              <span class="flex items-center gap-2"><span>✏️</span> Nhầm số / Nhầm d với r / Đảo số</span>
-              <span class="text-xs opacity-50">#2</span>
-            </button>
-            <button class="error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="nham_cong_thuc">
-              <span class="flex items-center gap-2"><span>📐</span> Nhầm công thức hình (Chu vi sang diện tích...)</span>
-              <span class="text-xs opacity-50">#3</span>
-            </button>
-            <button class="error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="tinh_toan_phay">
-              <span class="flex items-center gap-2"><span>🧮</span> Tính toán sai / Lỗi dấu phẩy thập phân</span>
-              <span class="text-xs opacity-50">#4</span>
-            </button>
-            <button class="error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="sai_loi_giai">
-              <span class="flex items-center gap-2"><span>📝</span> Sai câu lời giải / Nhầm đơn vị đo</span>
-              <span class="text-xs opacity-50">#5</span>
+            <button class="error-tag-btn p-2.5 rounded-xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="nham_cong_thuc">
+              <span class="flex items-center gap-2"><span>⭕</span> Nhầm công thức hình / Nhầm d với r</span>
             </button>
           </div>
         </div>
 
-        <!-- Chalkboard Feedback Box (Bảng Đen Thầy Huy) -->
+        <!-- Chalkboard Feedback Box -->
         <div id="chalkboard-panel" class="chalkboard rounded-3xl p-5 text-white shadow-xl relative min-h-[260px] flex flex-col justify-between">
-          <div class="chalk-dust">
+          <div>
             <div class="flex items-center justify-between pb-3 border-b border-emerald-700/60 mb-3">
               <div class="flex items-center gap-2">
                 <span class="text-2xl">👨‍🏫</span>
@@ -222,11 +209,10 @@
               <span class="text-[10px] bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full font-mono">K-MATH LỚP 5</span>
             </div>
 
-            <!-- Feedback Content -->
-            <div id="chalk-content" class="text-sm space-y-3 handwriting text-emerald-100 text-base leading-relaxed">
-              <p>Chào thám tử nhí! Hãy đọc thật kỹ đề bài và bài giải bên trái.</p>
+            <div id="chalk-content" class="space-y-3 handwriting text-emerald-100 text-base leading-relaxed">
+              <p>Chào thám tử nhí! Hãy đọc thật kỹ phép đặt tính và bài giải bên trái.</p>
               <p class="text-amber-200">🔍 Bước 1: Bấm vào dòng làm sai.</p>
-              <p class="text-amber-200">🏷️ Bước 2: Bắt đúng tên bẫy mà bạn đã dính phải nhé!</p>
+              <p class="text-amber-200">🏷️ Bước 2: Bắt đúng loại bệnh mà bạn mắc phải nhé!</p>
             </div>
           </div>
 
@@ -243,24 +229,20 @@
     </div>
   </main>
 
-  <!-- MODAL 1: CHỌN THÁM TỬ (MINH KHANG, HẢI ĐĂNG, NGỌC DIỆP, NGỌC NAM, LINH ANH, MINH ANH) -->
+  <!-- MODAL: SELECT DETECTIVE -->
   <div id="modal-select-detective" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-4 border-amber-300 text-center animate-scale-up">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-4 border-amber-300 text-center">
       <div class="text-5xl mb-2">🕵️‍♀️🕵️‍♂️</div>
       <h2 class="text-2xl font-black text-amber-800">Chào Mừng Đến Lớp Thầy Huy!</h2>
-      <p class="text-slate-600 text-sm mt-1 mb-5 font-semibold">Em hãy chọn tên của mình để bắt đầu vào ca trực thám tử soi lỗi nhé:</p>
-
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6" id="detective-roster-list">
-        <!-- Roster injected by JS -->
-      </div>
-
+      <p class="text-slate-600 text-sm mt-1 mb-5 font-semibold">Em hãy chọn đúng tên mình để vào ca trực thám tử soi lỗi nhé:</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6" id="detective-roster-list"></div>
       <div class="text-xs text-slate-400 font-medium italic">
-        "Không có lỗi sai nào thoát khỏi mắt thám tử nhí lớp Thầy Huy!"
+        "Thành thạo đặt tính số thập phân và đổi đơn vị đo cùng Thầy Huy!"
       </div>
     </div>
   </div>
 
-  <!-- MODAL 2: BẢNG VÀNG LỚP THẦY HUY -->
+  <!-- MODAL: LEADERBOARD -->
   <div id="modal-leaderboard" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-amber-200">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
@@ -270,119 +252,47 @@
         </div>
         <button id="btn-close-leaderboard" class="text-slate-400 hover:text-slate-700 text-xl font-black">&times;</button>
       </div>
-
-      <div class="space-y-2.5 max-h-72 overflow-y-auto pr-1" id="leaderboard-table">
-        <!-- Rendered by JS -->
-      </div>
-
+      <div class="space-y-2.5 max-h-72 overflow-y-auto pr-1" id="leaderboard-table"></div>
       <button id="btn-reset-scores" class="mt-5 w-full py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition border border-dashed border-slate-200">
-        Đặt lại bảng điểm (Khi bắt đầu buổi học mới)
+        Đặt lại bảng điểm (Cho buổi học mới)
       </button>
     </div>
   </div>
 
-  <!-- MODAL 3: SỔ TAY THẦY HUY (QUẢN LÝ & NHẬP THÊM BÀI TẬP) -->
+  <!-- MODAL: NOTEBOOK -->
   <div id="modal-notebook" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border-2 border-emerald-200 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <div class="flex items-center gap-2">
           <span class="text-2xl">📋</span>
           <div>
-            <h3 class="text-lg font-black text-emerald-800">Sổ Tay Biên Soạn Của Thầy Huy</h3>
-            <p class="text-xs text-slate-500">Thêm bài tập thực tế từ lỗi sai trên lớp của học sinh</p>
+            <h3 class="text-lg font-black text-emerald-800">Sổ Tay Thầy Huy</h3>
+            <p class="text-xs text-slate-500">Thêm đề bài và tải file bài tập</p>
           </div>
         </div>
         <button id="btn-close-notebook" class="text-slate-400 hover:text-slate-700 text-xl font-black">&times;</button>
       </div>
-
-      <form id="form-add-case" class="space-y-3.5 text-xs">
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Chuyên đề:</label>
-          <select id="input-category" class="w-full p-2.5 rounded-xl border border-slate-200 font-semibold bg-slate-50">
-            <option value="decimal">Tính toán số thập phân</option>
-            <option value="triangle">Diện tích hình tam giác</option>
-            <option value="circle">Diện tích & Chu vi hình tròn</option>
-            <option value="trapezoid">Diện tích hình thang</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Học sinh làm bài này:</label>
-          <select id="input-student" class="w-full p-2.5 rounded-xl border border-slate-200 font-semibold bg-slate-50">
-            <option value="Minh Khang">Minh Khang</option>
-            <option value="Hải Đăng">Hải Đăng</option>
-            <option value="Ngọc Diệp">Ngọc Diệp</option>
-            <option value="Ngọc Nam">Ngọc Nam</option>
-            <option value="Linh Anh">Linh Anh</option>
-            <option value="Minh Anh">Minh Anh</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Đề bài Thầy giao:</label>
-          <textarea id="input-problem" rows="2" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium" placeholder="Ví dụ: Tính diện tích tam giác có đáy 8cm, chiều cao 5cm..." required></textarea>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Các dòng giải của bạn (Mỗi dòng một bước):</label>
-          <textarea id="input-steps" rows="3" class="w-full p-2.5 rounded-xl border border-slate-200 font-mono" placeholder="Dòng 1: Chiều cao tam giác là...&#10;Dòng 2: Diện tích tam giác là: 8 x 5 = 40 (cm2)&#10;Dòng 3: Đáp số: 40 cm2" required></textarea>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Dòng mắc lỗi sai:</label>
-            <select id="input-error-step" class="w-full p-2.5 rounded-xl border border-slate-200 font-semibold">
-              <option value="1">Dòng 1</option>
-              <option value="2" selected>Dòng 2</option>
-              <option value="3">Dòng 3</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Nhóm lỗi:</label>
-            <select id="input-error-tag" class="w-full p-2.5 rounded-xl border border-slate-200 font-semibold">
-              <option value="quen_chia_2">Quên chia 2</option>
-              <option value="chep_nham_so">Nhầm số / Bán kính</option>
-              <option value="nham_cong_thuc">Nhầm công thức hình</option>
-              <option value="tinh_toan_phay">Tính toán / Dấu phẩy</option>
-              <option value="sai_loi_giai">Sai lời giải / Đơn vị</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Thầy Huy dặn dò & Lời giải chuẩn:</label>
-          <textarea id="input-advice" rows="2" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium" placeholder="Bạn đã quên chia 2 khi tính diện tích tam giác! Công thức chuẩn là S = (a x h) : 2 = (8 x 5) : 2 = 20 cm2..." required></textarea>
-        </div>
-
-        <div class="pt-2 flex items-center justify-between gap-3">
-          <button type="button" id="btn-export-json" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">
-            📥 Xuất File JSON
-          </button>
-          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black shadow-md">
-            Lưu vào Game
-          </button>
-        </div>
-      </form>
+      <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 mb-4">
+        💡 <strong>Gợi ý cho Thầy Huy:</strong> Tất cả 15 vụ án đã cập nhật tên học sinh (Minh Khang, Hải Đăng, Ngọc Diệp, Ngọc Nam, Linh Anh, Trang Anh). Thầy có thể xuất file JSON để lưu trữ hoặc chia sẻ!
+      </div>
+      <div class="flex justify-end gap-3">
+        <button type="button" id="btn-export-json" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs">
+          📥 Xuất File JSON Bài Tập
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC & AUDIO ENGINE -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    /* ==========================================================================
-       1. WEB AUDIO API SOUND ENGINE (Âm thanh vui nhộn không cần file ngoài)
-       ========================================================================== */
     class MathAudioEngine {
-      constructor() {
-        this.ctx = null;
-      }
+      constructor() { this.ctx = null; }
       init() {
         if (!this.ctx) {
           const AudioContext = window.AudioContext || window.webkitAudioContext;
           this.ctx = new AudioContext();
         }
-        if (this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
       }
       playNote(freq, type = 'sine', duration = 0.15, gainVal = 0.1) {
         this.init();
@@ -397,19 +307,12 @@
         osc.start();
         osc.stop(this.ctx.currentTime + duration);
       }
-      click() {
-        this.playNote(800, 'triangle', 0.05, 0.05);
-      }
-      stepSelect() {
-        this.playNote(520, 'sine', 0.1, 0.1);
-      }
+      click() { this.playNote(800, 'triangle', 0.05, 0.05); }
+      stepSelect() { this.playNote(520, 'sine', 0.1, 0.1); }
       success() {
         this.init();
-        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-        notes.forEach((freq, idx) => {
-          setTimeout(() => {
-            this.playNote(freq, 'triangle', 0.25, 0.15);
-          }, idx * 75);
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          setTimeout(() => this.playNote(freq, 'triangle', 0.25, 0.15), idx * 75);
         });
       }
       wrong() {
@@ -419,19 +322,13 @@
       }
       streakFanfare() {
         this.init();
-        const notes = [440, 554, 659, 880, 1108];
-        notes.forEach((freq, idx) => {
-          setTimeout(() => {
-            this.playNote(freq, 'sine', 0.3, 0.2);
-          }, idx * 60);
+        [440, 554, 659, 880, 1108].forEach((freq, idx) => {
+          setTimeout(() => this.playNote(freq, 'sine', 0.3, 0.2), idx * 60);
         });
       }
     }
     const audio = new MathAudioEngine();
 
-    /* ==========================================================================
-       2. CANVAS CONFETTI ENGINE (Pháo hoa ăn mừng)
-       ========================================================================== */
     class ConfettiEffect {
       constructor() {
         this.canvas = document.getElementById('confetti-canvas');
@@ -460,9 +357,7 @@
             alpha: 1
           });
         }
-        if (!this.animationId) {
-          this.loop();
-        }
+        if (!this.animationId) this.loop();
       }
       loop() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -470,7 +365,7 @@
           const p = this.particles[i];
           p.x += p.vx;
           p.y += p.vy;
-          p.vy += 0.35; // gravity
+          p.vy += 0.35;
           p.vx *= 0.98;
           p.rotation += p.vRot;
           p.alpha -= 0.012;
@@ -497,64 +392,157 @@
     }
     const confetti = new ConfettiEffect();
 
-    /* ==========================================================================
-       3. NGÂN HÀNG BÀI TẬP BẪY KINH ĐIỂN LỚP 5 - LỚP THẦY HUY
-          Chuyên đề: Số thập phân, Tam giác, Hình tròn, Hình thang
-       ========================================================================== */
-    const ROSTER_NAMES = ["Minh Khang", "Hải Đăng", "Ngọc Diệp", "Ngọc Nam", "Linh Anh", "Minh Anh"];
+    // DANH SÁCH 6 BẠN HỌC SINH LỚP THẦY HUY (ĐÃ CẬP NHẬT TRANG ANH)
+    const ROSTER_NAMES = ["Minh Khang", "Hải Đăng", "Ngọc Diệp", "Ngọc Nam", "Linh Anh", "Trang Anh"];
 
-    const DEFAULT_CASES = [
-      // 1. Số thập phân: Bẫy trừ khuyết hàng phần trăm
+    const EXTENDED_CASES = [
+      // 1. STP CỘNG: ĐẶT TÍNH LỆCH CỘT
       {
-        id: "case-dec-1",
-        category: "decimal",
-        categoryName: "Số thập phân",
+        id: "stp-add-1",
+        category: "decimal_calc",
+        categoryName: "Đặt tính STP (+)",
         student: "Minh Khang",
-        problem: "Thực hiện phép tính trừ hai số thập phân: 15,3 - 4,85",
+        problem: "Đặt tính rồi tính: 35,4 + 6,28",
         steps: [
-          { num: 1, text: "Đặt tính thẳng cột: hàng chục theo chục, đơn vị theo đơn vị, dấu phẩy thẳng cột." },
-          { num: 2, text: "Thực hiện trừ từ phải sang trái: Hạ 5 ở hàng phần trăm xuống được 5." },
-          { num: 3, text: "Lấy 13 trừ 8 được 5 viết 5 nhớ 1; 15 trừ (4+1) được 10. Kết quả là 10,55." }
+          { num: 1, text: "Bước đặt tính:", renderType: "column", code: "  35,4\n+ \n  6,28\n------\n (Căn lề: số 8 thẳng cột với số 4?)" },
+          { num: 2, text: "Thực hiện cộng: Coi 4 cộng 8 là 12, viết 2 nhớ 1. 5 + 2 + 1 = 8. Hạ 3 và 6. Viết kết quả: 98,2." },
+          { num: 3, text: "Kết luận: 35,4 + 6,28 = 98,2." }
         ],
-        errorStep: 2,
-        errorTag: "tinh_toan_phay",
-        advice: "Minh Khang quên mượn ở hàng phần trăm khuyết! 15,3 phải hiểu là 15,30. Khi trừ phải lấy 0 trừ 5 (10 trừ 5 được 5 nhớ 1), mượn 1 sang hàng phần mười. Kết quả đúng phải là 10,45!"
+        errorStep: 1,
+        errorTag: "dat_tinh_lech",
+        advice: "Minh Khang đã đặt tính lệch cột! Khi cộng số thập phân, DẤU PHẨY PHẢI THẲNG CỘT VỚI DẤU PHẨY. Hàng phần mười (4) phải thẳng với hàng phần mười (2), còn 8 ở hàng phần trăm phải thẳng với số 0 ngầm hiểu (35,40). Kết quả đúng phải là: 41,68!"
       },
-      // 2. Số thập phân: Bẫy đếm thiếu chữ số phần thập phân khi nhân
+      // 2. STP TRỪ: QUÊN MƯỢN Ở HÀNG KHUYẾT SỐ 0
       {
-        id: "case-dec-2",
-        category: "decimal",
-        categoryName: "Số thập phân",
+        id: "stp-sub-1",
+        category: "decimal_calc",
+        categoryName: "Đặt tính STP (-)",
         student: "Hải Đăng",
-        problem: "Tính diện tích một mảnh bìa hình chữ nhật có chiều dài 2,4 m và chiều rộng 0,5 m.",
+        problem: "Đặt tính rồi tính: 45,2 - 7,68",
         steps: [
-          { num: 1, text: "Diện tích mảnh bìa hình chữ nhật là:" },
-          { num: 2, text: "2,4 × 0,5 = 12 (m²)" },
-          { num: 3, text: "Đáp số: 12 m²" }
+          { num: 1, text: "Đặt tính: Viết 45,2 rồi viết 7,68 dưới sao cho các dấu phẩy thẳng cột với nhau." },
+          { num: 2, text: "Thực hiện trừ từ phải sang trái:\n• Hàng phần trăm: Trên không có gì nên hạ 8 xuống viết 8.\n• Hàng phần mười: 2 không trừ được 6, lấy 12 - 6 = 6, viết 6 nhớ 1." },
+          { num: 3, text: "• Hàng đơn vị: 5 không trừ được (7+1=8), lấy 15 - 8 = 7, nhớ 1. 4 - 1 = 3. Kết quả: 37,68." }
         ],
         errorStep: 2,
         errorTag: "tinh_toan_phay",
-        advice: "Hải Đăng tính 24 × 5 = 120 rất nhanh nhưng quên đếm chữ số thập phân! Thừa số 2,4 có 1 chữ số, 0,5 có 1 chữ số → Tổng cộng 2 chữ số thập phân. 120 lùi 2 dấu phẩy phải là 1,20 = 1,2 m² chứ không thể là 12 m²!"
+        advice: "Hải Đăng đã mắc bẫy kinh điển: 'Trên khuyết thì hạ xuống'! 45,2 phải hiểu là 45,20. Ở hàng phần trăm phải lấy 0 trừ 8, không trừ được nên phải mượn 1 chục thành (10 - 8 = 2 nhớ 1). Kết quả chuẩn xác là 37,52!"
       },
-      // 3. Số thập phân: Bẫy chia số thập phân quên thêm 0 khi hạ dư
+      // 3. STP NHÂN: QUÊN LÙI TÍCH RIÊNG THỨ HAI
       {
-        id: "case-dec-3",
-        category: "decimal",
-        categoryName: "Số thập phân",
+        id: "stp-mul-1",
+        category: "decimal_calc",
+        categoryName: "Đặt tính STP (×)",
         student: "Ngọc Diệp",
-        problem: "Thực hiện phép chia số thập phân cho số tự nhiên: 12,36 : 6",
+        problem: "Đặt tính rồi tính phép nhân: 3,4 × 2,5",
         steps: [
-          { num: 1, text: "Lấy phần nguyên 12 chia 6 được 2, dư 0. Đánh dấu phẩy vào thương: 2," },
-          { num: 2, text: "Hạ 3 xuống, 3 không chia được cho 6 nên hạ tiếp 6 được 36; 36 chia 6 được 6." },
-          { num: 3, text: "Kết quả phép tính là: 2,6." }
+          { num: 1, text: "Đặt tính như nhân số tự nhiên 34 × 25." },
+          { num: 2, text: "Tính tích riêng:\n• Tích riêng 1 (5 × 34): 170\n• Tích riêng 2 (2 × 34): Viết 68 ngay thẳng cột dưới 170 (không lùi sang trái 1 cột).\n• Cộng hai tích: 170 + 68 = 238." },
+          { num: 3, text: "Đếm cả hai thừa số có 2 chữ số thập phân nên đánh dấu phẩy được: 2,38." }
+        ],
+        errorStep: 2,
+        errorTag: "dat_tinh_lech",
+        advice: "Ngọc Diệp quên quy tắc nhân: Tích riêng thứ hai (khi nhân với chữ số hàng chục 2) PHẢI LÙI SANG TRÁI 1 CỘT so với tích riêng thứ nhất! Khi viết thẳng cột thì kết quả sẽ sai hoàn toàn. 3,4 × 2,5 = 8,50 = 8,5!"
+      },
+      // 4. STP NHÂN: ĐẾM THIẾU CHỮ SỐ PHẦN THẬP PHÂN Ở KẾT QUẢ
+      {
+        id: "stp-mul-2",
+        category: "decimal_calc",
+        categoryName: "Đặt tính STP (×)",
+        student: "Ngọc Nam",
+        problem: "Đặt tính rồi tính: 1,25 × 0,8",
+        steps: [
+          { num: 1, text: "Đặt tính và nhân như số tự nhiên: 125 × 8 = 1000." },
+          { num: 2, text: "Đếm phần thập phân: Thừa số 0,8 có 1 chữ số thập phân nên tách ở tích ra 1 chữ số từ phải sang trái." },
+          { num: 3, text: "Kết quả được: 100,0 = 100." }
         ],
         errorStep: 2,
         errorTag: "tinh_toan_phay",
-        advice: "Ngọc Diệp mắc lỗi kinh điển khi chia! Khi hạ 3 xuống, vì 3 < 6 nên ta PHẢI VIẾT 0 VÀO THƯƠNG rồi mới hạ tiếp chữ số 6. Kết quả chuẩn xác là 2,06 chứ không phải 2,6!"
+        advice: "Ngọc Nam đếm thiếu rồi! Phải đếm TỔNG SỐ chữ số phần thập phân của CẢ HAI THỪA SỐ: 1,25 có 2 chữ số, 0,8 có 1 chữ số → Tổng cộng có 3 chữ số thập phân! Từ 1000 lùi 3 dấu phẩy ta được 1,000 = 1. Kết quả chỉ là 1 chứ không thể là 100!"
       },
-      // 4. Tam giác: Bẫy quên chia 2
+      // 5. STP CHIA: QUÊN VIẾT SỐ 0 VÀO THƯƠNG KHI SỐ HẠ NHỎ HƠN SỐ CHIA
       {
-        id: "case-tri-1",
+        id: "stp-div-1",
+        category: "decimal_calc",
+        categoryName: "Đặt tính STP (:)",
+        student: "Linh Anh",
+        problem: "Thực hiện phép chia số thập phân cho số tự nhiên: 24,18 : 6",
+        steps: [
+          { num: 1, text: "Lấy 24 chia 6 được 4, dư 0. Viết dấu phẩy vào bên phải 4 thành: 4," },
+          { num: 2, text: "Hạ 1 xuống. Vì 1 không chia được cho 6 nên hạ tiếp chữ số 8 xuống thành 18. Lấy 18 chia 6 được 3, dư 0." },
+          { num: 3, text: "Kết quả phép chia là: 4,3." }
+        ],
+        errorStep: 2,
+        errorTag: "tinh_toan_phay",
+        advice: "Linh Anh dính bẫy chia số thập phân: Mỗi lần hạ một chữ số xuống, ta BẮT BUỘC PHẢI THỰC HIỆN PHÉP CHIA! Khi hạ 1 xuống, vì 1 < 6 nên 1 : 6 = 0, phải VIẾT 0 VÀO THƯƠNG rồi mới hạ tiếp 8. Kết quả đúng phải là 4,03 chứ không thể là 4,3!"
+      },
+      // 6. STP CHIA: QUÊN LÙI DẤU PHẨY CẢ HAI SỐ KHI CHIA CHO STP
+      {
+        id: "stp-div-2",
+        category: "decimal_calc",
+        categoryName: "Đặt tính STP (:)",
+        student: "Trang Anh",
+        problem: "Thực hiện phép chia một số tự nhiên cho một số thập phân: 15 : 2,5",
+        steps: [
+          { num: 1, text: "Bỏ dấu phẩy ở số chia 2,5 thành 25 (chuyển sang phải 1 chữ số)." },
+          { num: 2, text: "Giữ nguyên số bị chia 15 rồi thực hiện phép chia 15 : 25." },
+          { num: 3, text: "15 chia 25 được 0, viết thêm 0 thành 150 : 25 = 6. Kết quả là 0,6." }
+        ],
+        errorStep: 2,
+        errorTag: "tinh_toan_phay",
+        advice: "Trang Anh quên quy tắc cân bằng dấu phẩy! Phần thập phân của số chia 2,5 có 1 chữ số, khi bỏ dấu phẩy ở 2,5 thì PHẢI VIẾT THÊM MỘT CHỮ SỐ 0 vào bên phải số bị chia (15 biến thành 150). Ta thực hiện 150 : 25 = 6 chứ không phải 0,6!"
+      },
+      // 7. DIỆN TÍCH: QUY ĐỔI M2 RA DM2 (BẪY 10 LẦN THAY VÌ 100 LẦN)
+      {
+        id: "area-1",
+        category: "area_unit",
+        categoryName: "Đổi đơn vị diện tích",
+        student: "Minh Khang",
+        problem: "Viết số thập phân thích hợp vào chỗ chấm: 5 m² 8 dm² = ... m²",
+        steps: [
+          { num: 1, text: "Giữ nguyên 5 m² ở phần nguyên." },
+          { num: 2, text: "Đổi 8 dm² sang m²: Vì 1 m = 10 dm nên 8 dm² = 8/10 m² = 0,8 m²." },
+          { num: 3, text: "Cộng lại ta được kết quả: 5 + 0,8 = 5,8 m²." }
+        ],
+        errorStep: 2,
+        errorTag: "doi_don_vi",
+        advice: "Minh Khang đã nhầm sang đơn vị đo độ dài! Đơn vị đo diện tích hai đơn vị liền nhau gấp kém nhau 100 LẦN: 1 m² = 100 dm², do đó 8 dm² = 8/100 m² = 0,08 m². Kết quả chuẩn phải là 5,08 m² chứ không phải 5,8 m²!"
+      },
+      // 8. DIỆN TÍCH: QUY ĐỔI HÉC-TA (ha) RA M2
+      {
+        id: "area-2",
+        category: "area_unit",
+        categoryName: "Đổi đơn vị diện tích",
+        student: "Hải Đăng",
+        problem: "Một khu rừng có diện tích 2,4 ha. Hỏi diện tích khu rừng đó bằng bao nhiêu mét vuông (m²)?",
+        steps: [
+          { num: 1, text: "Nhớ lại mối quan hệ giữa héc-ta và mét vuông." },
+          { num: 2, text: "Vì 1 ha = 1000 m² nên lấy 2,4 × 1000 = 2400 m²." },
+          { num: 3, text: "Đáp số: 2400 m²." }
+        ],
+        errorStep: 2,
+        errorTag: "doi_don_vi",
+        advice: "Hải Đăng nhầm với đơn vị tấn - kg rồi! 1 héc-ta (ha) = 1 hm² = 10 000 m² (mười nghìn mét vuông). Do đó 2,4 ha = 2,4 × 10 000 = 24 000 m²!"
+      },
+      // 9. DIỆN TÍCH: QUY ĐỔI TỪ ĐƠN VỊ BÉ SANG ĐƠN VỊ LỚN
+      {
+        id: "area-3",
+        category: "area_unit",
+        categoryName: "Đổi đơn vị diện tích",
+        student: "Ngọc Diệp",
+        problem: "Viết số thập phân thích hợp vào chỗ chấm: 3500 m² = ... ha",
+        steps: [
+          { num: 1, text: "1 ha = 10 000 m² nên đổi từ m² ra ha ta chia cho 10 000." },
+          { num: 2, text: "Lấy 3500 : 10 000 = lùi dấu phẩy 3 chữ số sang trái được 3,5 ha." },
+          { num: 3, text: "Kết luận: 3500 m² = 3,5 ha." }
+        ],
+        errorStep: 2,
+        errorTag: "doi_don_vi",
+        advice: "Ngọc Diệp lùi thiếu dấu phẩy! Chia cho 10 000 (có 4 chữ số 0) thì phải lùi dấu phẩy 4 CHỮ SỐ sang trái: 3500 : 10 000 = 0,35 ha. Nếu là 3,5 ha thì diện tích phải là 35 000 m² cơ!"
+      },
+      // 10. TAM GIÁC: QUÊN CHIA 2
+      {
+        id: "tri-1",
         category: "triangle",
         categoryName: "Diện tích tam giác",
         student: "Ngọc Nam",
@@ -566,62 +554,46 @@
         ],
         errorStep: 2,
         errorTag: "quen_chia_2",
-        advice: "Ngọc Nam đã quên chia 2 rồi! Công thức tính diện tích hình tam giác là S = (đáy × chiều cao) : 2. Bài chuẩn phải là (14 × 8) : 2 = 56 cm²!"
+        advice: "Ngọc Nam quên chia 2! Công thức tính diện tích hình tam giác là S = (đáy × chiều cao) : 2 = (14 × 8) : 2 = 56 cm²!"
       },
-      // 5. Tam giác: Bẫy không đổi đồng nhất đơn vị đo đáy và chiều cao
+      // 11. TAM GIÁC: KHÁC ĐƠN VỊ ĐO ĐÁY VÀ CAO
       {
-        id: "case-tri-2",
+        id: "tri-2",
         category: "triangle",
         categoryName: "Diện tích tam giác",
         student: "Linh Anh",
-        problem: "Một bồn hoa hình tam giác có cạnh đáy dài 2 m và chiều cao là 15 dm. Tính diện tích bồn hoa đó.",
+        problem: "Một bồn hoa hình tam giác có đáy dài 2 m và chiều cao là 15 dm. Tính diện tích bồn hoa.",
         steps: [
           { num: 1, text: "Diện tích bồn hoa hình tam giác là:" },
           { num: 2, text: "(2 × 15) : 2 = 15 (m²)" },
           { num: 3, text: "Đáp số: 15 m²" }
         ],
         errorStep: 2,
-        errorTag: "sai_loi_giai",
-        advice: "Linh Anh đã vội vàng nhân ngay khi chưa đồng nhất đơn vị đo! Đáy là 2 m = 20 dm. Diện tích chuẩn phải là (20 × 15) : 2 = 150 dm² (hoặc 1,5 m²). Nhớ quy tắc Thầy Huy dặn: 'Khác đơn vị thì phải đổi trước khi tính'!"
+        errorTag: "doi_don_vi",
+        advice: "Linh Anh chưa đổi đồng nhất đơn vị đo! Đáy là 2 m = 20 dm. Phép tính chuẩn phải là: (20 × 15) : 2 = 150 dm² (hoặc 1,5 m²). Nhớ lời Thầy Huy: Khác đơn vị phải đổi trước!"
       },
-      // 6. Tam giác: Bẫy nhân nhầm cạnh bên thay vì chiều cao
+      // 12. HÌNH TRÒN: CHO ĐƯỜNG KÍNH d NHƯNG TÍNH THẲNG NHƯ r
       {
-        id: "case-tri-3",
-        category: "triangle",
-        categoryName: "Diện tích tam giác",
-        student: "Minh Anh",
-        problem: "Cho tam giác nhọn ABC có đáy BC = 10 cm, cạnh bên AB = 8 cm, chiều cao AH hạ từ đỉnh A xuống BC là 6 cm. Tính diện tích tam giác ABC.",
-        steps: [
-          { num: 1, text: "Diện tích hình tam giác ABC là:" },
-          { num: 2, text: "(10 × 8) : 2 = 40 (cm²)" },
-          { num: 3, text: "Đáp số: 40 cm²" }
-        ],
-        errorStep: 2,
-        errorTag: "nham_cong_thuc",
-        advice: "Minh Anh đã lấy nhầm độ dài cạnh bên AB thay vì chiều cao AH! Công thức là (đáy × chiều cao tương ứng) : 2. Phép tính chuẩn: (10 × 6) : 2 = 30 cm²!"
-      },
-      // 7. Hình tròn: Bẫy nhầm đường kính d thành bán kính r
-      {
-        id: "case-cir-1",
+        id: "cir-1",
         category: "circle",
-        categoryName: "Hình tròn",
-        student: "Minh Khang",
-        problem: "Tính diện tích của một biển báo giao thông hình tròn có đường kính d = 40 cm.",
+        categoryName: "Chu vi & Diện tích tròn",
+        student: "Trang Anh",
+        problem: "Tính diện tích mặt bàn hình tròn có đường kính d = 40 cm.",
         steps: [
-          { num: 1, text: "Diện tích của biển báo giao thông hình tròn là:" },
+          { num: 1, text: "Diện tích mặt bàn hình tròn là:" },
           { num: 2, text: "40 × 40 × 3,14 = 5024 (cm²)" },
           { num: 3, text: "Đáp số: 5024 cm²" }
         ],
         errorStep: 2,
-        errorTag: "chep_nham_so",
-        advice: "Minh Khang mắc bẫy lớn nhất của đề thi lớp 5! Đề bài cho 'đường kính d = 40 cm', muốn tính diện tích phải tìm bán kính trước: r = 40 : 2 = 20 cm. Sau đó mới tính: 20 × 20 × 3,14 = 1256 cm²!"
+        errorTag: "nham_cong_thuc",
+        advice: "Trang Anh nhầm đường kính thành bán kính! Đề bài cho đường kính d = 40 cm, trước tiên phải tìm bán kính: r = 40 : 2 = 20 cm. Sau đó tính diện tích: 20 × 20 × 3,14 = 1256 cm²!"
       },
-      // 8. Hình tròn: Bẫy nhầm công thức diện tích sang chu vi
+      // 13. HÌNH TRÒN: NHẦM CÔNG THỨC CHU VI VÀ DIỆN TÍCH
       {
-        id: "case-cir-2",
+        id: "cir-2",
         category: "circle",
-        categoryName: "Hình tròn",
-        student: "Hải Đăng",
+        categoryName: "Chu vi & Diện tích tròn",
+        student: "Minh Khang",
         problem: "Tính diện tích hình tròn có bán kính r = 5 cm.",
         steps: [
           { num: 1, text: "Diện tích hình tròn là:" },
@@ -630,30 +602,14 @@
         ],
         errorStep: 2,
         errorTag: "nham_cong_thuc",
-        advice: "Hải Đăng đã nhầm sang công thức Chu vi rồi! Chu vi là r × 2 × 3,14, còn Diện tích phải là Bán kính nhân Bán kính: S = r × r × 3,14 = 5 × 5 × 3,14 = 78,5 cm²!"
+        advice: "Minh Khang lại lấy công thức Chu vi tính cho Diện tích! Chu vi là r × 2 × 3,14, còn Diện tích phải là: S = r × r × 3,14 = 5 × 5 × 3,14 = 78,5 cm²!"
       },
-      // 9. Hình tròn: Bẫy viết nhầm r x r thành r x 2
+      // 14. HÌNH THANG: QUÊN CHIA 2
       {
-        id: "case-cir-3",
-        category: "circle",
-        categoryName: "Hình tròn",
-        student: "Ngọc Diệp",
-        problem: "Một chiếc đĩa sứ hình tròn có bán kính 6 cm. Tính diện tích bề mặt của chiếc đĩa.",
-        steps: [
-          { num: 1, text: "Diện tích bề mặt chiếc đĩa sứ là:" },
-          { num: 2, text: "6 × 2 × 3,14 = 37,68 (cm²)" },
-          { num: 3, text: "Đáp số: 37,68 cm²" }
-        ],
-        errorStep: 2,
-        errorTag: "nham_cong_thuc",
-        advice: "Ngọc Diệp nhầm lẫn giữa 'bán kính nhân bán kính' và 'bán kính nhân 2'! Phải là 6 × 6 × 3,14 = 113,04 cm². Thầy Huy luôn nhắc: 'Diện tích thì r nhân r, chu vi mới là r nhân 2'!"
-      },
-      // 10. Hình thang: Bẫy quên chia 2
-      {
-        id: "case-trap-1",
+        id: "trap-1",
         category: "trapezoid",
         categoryName: "Diện tích hình thang",
-        student: "Ngọc Nam",
+        student: "Hải Đăng",
         problem: "Tính diện tích mảnh đất hình thang có đáy lớn 12 m, đáy bé 8 m và chiều cao 6 m.",
         steps: [
           { num: 1, text: "Diện tích mảnh đất hình thang là:" },
@@ -662,14 +618,14 @@
         ],
         errorStep: 2,
         errorTag: "quen_chia_2",
-        advice: "Ngọc Nam lại quên chia 2 rồi! Nhớ bài thơ Thầy dạy: 'Muốn tính diện tích hình thang / Đáy lớn đáy nhỏ ta mang cộng vào / Cộng vào nhân với chiều cao / CHIA ĐÔI MỘT NỬA thế nào cũng ra'. Chuẩn là (12 + 8) × 6 : 2 = 60 m²!"
+        advice: "Hải Đăng quên chia 2! Bài thơ hình thang: 'Đáy lớn đáy nhỏ ta mang cộng vào / Cộng vào nhân với chiều cao / Chia đôi một nửa thế nào cũng ra'. Chuẩn là (12 + 8) × 6 : 2 = 60 m²!"
       },
-      // 11. Hình thang: Bẫy quên ngoặc tròn dẫn đến sai thứ tự phép tính
+      // 15. HÌNH THANG: QUÊN ĐÓNG NGOẶC ĐƠN
       {
-        id: "case-trap-2",
+        id: "trap-2",
         category: "trapezoid",
         categoryName: "Diện tích hình thang",
-        student: "Linh Anh",
+        student: "Ngọc Diệp",
         problem: "Một thửa ruộng hình thang có đáy lớn 25 m, đáy bé 15 m và chiều cao 10 m. Tính diện tích thửa ruộng.",
         steps: [
           { num: 1, text: "Diện tích thửa ruộng hình thang là:" },
@@ -678,33 +634,14 @@
         ],
         errorStep: 2,
         errorTag: "nham_cong_thuc",
-        advice: "Linh Anh quên đóng mở ngoặc đơn ở tổng hai đáy! Khi viết 25 + 15 × 10 : 2, theo quy tắc tính toán bạn đã nhân chia trước (15 × 10 : 2 = 75) rồi mới cộng 25 ra 100. Đúng chuẩn phải có ngoặc: (25 + 15) × 10 : 2 = 40 × 10 : 2 = 200 m²!"
-      },
-      // 12. Hình thang: Bẫy khác đơn vị đo hai đáy
-      {
-        id: "case-trap-3",
-        category: "trapezoid",
-        categoryName: "Diện tích hình thang",
-        student: "Minh Anh",
-        problem: "Tính diện tích hình thang có đáy lớn là 3 m, đáy bé là 18 dm và chiều cao là 12 dm.",
-        steps: [
-          { num: 1, text: "Diện tích hình thang đã cho là:" },
-          { num: 2, text: "(3 + 18) × 12 : 2 = 126 (dm²)" },
-          { num: 3, text: "Đáp số: 126 dm²" }
-        ],
-        errorStep: 2,
-        errorTag: "sai_loi_giai",
-        advice: "Minh Anh chưa đổi đơn vị đáy lớn! Đáy lớn đang là 3 m = 30 dm. Phép tính chuẩn phải là: (30 + 18) × 12 : 2 = 48 × 12 : 2 = 288 dm²!"
+        advice: "Ngọc Diệp quên ngoặc đơn ở tổng hai đáy! Khi không có ngoặc, theo quy tắc nhân chia trước cộng trừ sau thì bạn tính 15 × 10 : 2 = 75 rồi mới cộng 25 ra 100. Đúng chuẩn phải có ngoặc: (25 + 15) × 10 : 2 = 200 m²!"
       }
     ];
 
-    /* ==========================================================================
-       4. GAME STATE CONTROLLER
-       ========================================================================== */
     class MathDetectiveApp {
       constructor() {
         this.detectives = ROSTER_NAMES;
-        this.currentDetective = localStorage.getItem('kmath_active_detective') || null;
+        this.currentDetective = localStorage.getItem('kmath_active_detective_v4') || null;
         this.cases = this.loadCases();
         this.filter = 'all';
         this.currentCaseIndex = 0;
@@ -719,19 +656,11 @@
       }
 
       loadCases() {
-        const saved = localStorage.getItem('kmath_cases_v2');
-        if (saved) {
-          try { return JSON.parse(saved); } catch(e) {}
-        }
-        return DEFAULT_CASES;
-      }
-
-      saveCases() {
-        localStorage.setItem('kmath_cases_v2', JSON.stringify(this.cases));
+        return EXTENDED_CASES;
       }
 
       loadScores() {
-        const saved = localStorage.getItem('kmath_scores_v2');
+        const saved = localStorage.getItem('kmath_scores_v4');
         if (saved) {
           try { return JSON.parse(saved); } catch(e) {}
         }
@@ -743,14 +672,13 @@
       }
 
       saveScores() {
-        localStorage.setItem('kmath_scores_v2', JSON.stringify(this.scores));
+        localStorage.setItem('kmath_scores_v4', JSON.stringify(this.scores));
       }
 
       initDOMElements() {
         this.dom = {
           detectiveAvatar: document.getElementById('detective-avatar'),
           detectiveName: document.getElementById('detective-name'),
-          btnChangeDetective: document.getElementById('btn-change-detective'),
           statSolved: document.getElementById('stat-solved'),
           statScore: document.getElementById('stat-score'),
           statStreak: document.getElementById('stat-streak'),
@@ -777,7 +705,6 @@
           btnNotebook: document.getElementById('btn-notebook'),
           modalNotebook: document.getElementById('modal-notebook'),
           btnCloseNotebook: document.getElementById('btn-close-notebook'),
-          formAddCase: document.getElementById('form-add-case'),
           btnExportJson: document.getElementById('btn-export-json'),
           filterButtons: document.querySelectorAll('.filter-btn')
         };
@@ -785,7 +712,7 @@
 
       setupApp() {
         this.renderRosterModal();
-        if (!this.currentDetective) {
+        if (!this.currentDetective || !this.detectives.includes(this.currentDetective)) {
           this.dom.modalSelectDetective.classList.remove('hidden');
         } else {
           this.setDetective(this.currentDetective);
@@ -814,7 +741,7 @@
 
       setDetective(name) {
         this.currentDetective = name;
-        localStorage.setItem('kmath_active_detective', name);
+        localStorage.setItem('kmath_active_detective_v4', name);
         if (!this.scores[name]) {
           this.scores[name] = { solved: 0, score: 0, streak: 0 };
           this.saveScores();
@@ -859,7 +786,7 @@
 
       loadCurrentCase() {
         if (this.filteredCases.length === 0) {
-          this.dom.problemText.textContent = "Chưa có bài tập nào trong chuyên đề này!";
+          this.dom.problemText.textContent = "Chưa có bài tập nào trong phần này!";
           this.dom.linesContainer.innerHTML = '';
           return;
         }
@@ -868,41 +795,47 @@
         this.selectedStep = null;
         this.isStep1Locked = false;
 
-        // Reset UI Components
         this.dom.btnNextStep.disabled = true;
         this.dom.btnNextStep.className = "px-5 py-2.5 rounded-2xl bg-slate-300 text-slate-500 font-black text-sm cursor-not-allowed transition flex items-center gap-2 shadow-sm";
+        this.dom.btnNextStep.classList.remove('hidden');
         this.dom.selectedStepIndicator.classList.add('hidden');
         this.dom.btnNextCase.classList.add('hidden');
 
-        // Reset Tagging Panel
         this.dom.taggingPanel.classList.add('opacity-50', 'pointer-events-none');
         this.dom.tagButtons.forEach(btn => {
-          btn.className = "error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between";
+          btn.className = "error-tag-btn p-2.5 rounded-xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between";
         });
 
-        // Set suspect student & problem
         this.dom.suspectStudent.textContent = `Bạn: ${c.student} - Lớp Toán 5 Thầy Huy`;
         this.dom.caseCategoryBadge.textContent = c.categoryName || "Toán 5";
         this.dom.problemText.textContent = c.problem;
 
-        // Reset Chalkboard
         this.dom.chalkStatus.textContent = "Trạng thái: Đang soi bài...";
         this.dom.chalkContent.innerHTML = `
-          <p class="text-amber-200">🔍 <strong>Bước 1:</strong> Thám tử ${this.currentDetective || 'nhí'} hãy đọc bài làm của bạn ${c.student} và bấm chọn DÒNG MẮC LỖI SAI nhé!</p>
+          <p class="text-amber-200">🔍 <strong>Bước 1:</strong> Thám tử ${this.currentDetective || 'nhí'} hãy quan sát từng dòng đặt tính và bài giải của bạn ${c.student}, sau đó bấm vào DÒNG BỊ LỖI SAI nhé!</p>
         `;
 
-        // Render Steps
         this.dom.linesContainer.innerHTML = '';
         c.steps.forEach(step => {
           const div = document.createElement('div');
-          div.className = "solution-line p-3 rounded-xl border-2 border-transparent hover:border-amber-300 hover:bg-amber-50/70 transition cursor-pointer flex items-start gap-3";
+          div.className = "solution-line p-3 rounded-xl border-2 border-transparent hover:border-amber-300 hover:bg-amber-50/70 transition cursor-pointer flex flex-col gap-1.5";
           div.dataset.stepNum = step.num;
+
+          let bodyHtml = `<div class="text-sm sm:text-base font-semibold text-slate-800 leading-snug whitespace-pre-line">${step.text}</div>`;
+          if (step.renderType === "column" && step.code) {
+            bodyHtml += `
+              <div class="mt-2 p-3 bg-amber-50/90 rounded-xl border border-amber-200 math-grid text-sm text-amber-950 font-bold whitespace-pre">
+${step.code}
+              </div>
+            `;
+          }
+
           div.innerHTML = `
-            <span class="w-7 h-7 rounded-lg bg-amber-200 text-amber-900 font-black flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-              ${step.num}
-            </span>
-            <div class="text-sm sm:text-base font-semibold text-slate-800 leading-snug">
-              ${step.text}
+            <div class="flex items-start gap-3">
+              <span class="w-7 h-7 rounded-lg bg-amber-200 text-amber-900 font-black flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                ${step.num}
+              </span>
+              <div class="flex-grow">${bodyHtml}</div>
             </div>
           `;
           div.addEventListener('click', () => this.handleSelectStep(step.num, div));
@@ -915,7 +848,6 @@
         audio.stepSelect();
         this.selectedStep = stepNum;
 
-        // Visual selection
         const allLines = this.dom.linesContainer.querySelectorAll('.solution-line');
         allLines.forEach(line => {
           line.classList.remove('border-rose-400', 'bg-rose-50', 'ring-2', 'ring-rose-200');
@@ -925,7 +857,6 @@
         this.dom.indicatorNum.textContent = stepNum;
         this.dom.selectedStepIndicator.classList.remove('hidden');
 
-        // Enable Next Step button
         this.dom.btnNextStep.disabled = false;
         this.dom.btnNextStep.className = "px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-black text-sm transition flex items-center gap-2 shadow-md hover:scale-105 transform";
       }
@@ -937,14 +868,13 @@
         this.dom.btnNextStep.disabled = true;
         this.dom.btnNextStep.classList.add('hidden');
 
-        // Unlock Tagging panel
         this.dom.taggingPanel.classList.remove('opacity-50', 'pointer-events-none');
         this.dom.taggingPanel.classList.add('ring-4', 'ring-amber-300');
 
         this.dom.chalkStatus.textContent = "Trạng thái: Bắt bệnh loại lỗi...";
         this.dom.chalkContent.innerHTML = `
           <p class="text-emerald-200">Đã chọn Dòng ${this.selectedStep}.</p>
-          <p class="text-amber-300">🏷️ <strong>Bước 2:</strong> Hãy chọn 1 trong 5 nhãn bẫy bên phải để hoàn tất ca bắt lỗi!</p>
+          <p class="text-amber-300">🏷️ <strong>Bước 2:</strong> Hãy chọn loại bẫy bạn mắc phải ở bảng bên phải để hoàn tất ca phá án!</p>
         `;
       }
 
@@ -959,10 +889,9 @@
         const detData = this.scores[this.currentDetective];
 
         if (isStepCorrect && isTagCorrect) {
-          // HOÀN TOÀN CHÍNH XÁC
           audio.success();
           confetti.fire(60);
-          btnEl.className = "error-tag-btn p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-100 text-emerald-900 font-black text-xs sm:text-sm flex items-center justify-between";
+          btnEl.className = "error-tag-btn p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-100 text-emerald-900 font-black text-xs sm:text-sm flex items-center justify-between";
 
           detData.solved += 1;
           detData.streak += 1;
@@ -980,29 +909,25 @@
             <div class="p-3 bg-emerald-800/80 rounded-xl text-emerald-100 text-xs mt-2 border border-emerald-600">
               <strong>Thầy Huy dặn dò:</strong> ${c.advice}
             </div>
-            ${streakBonus > 0 ? `<div class="text-rose-300 font-bold text-xs mt-1">🔥 Combo chuỗi đúng x${detData.streak}! Tặng thêm ${streakBonus} điểm sao!</div>` : ''}
+            ${streakBonus > 0 ? `<div class="text-rose-300 font-bold text-xs mt-1">🔥 Combo chuỗi đúng x${detData.streak}! Tặng thêm ${streakBonus} sao!</div>` : ''}
           `;
         } else {
-          // BẮT SAI HOẶC NHẦM DÒNG
           audio.wrong();
-          btnEl.className = "error-tag-btn p-3 rounded-2xl border-2 border-rose-500 bg-rose-100 text-rose-900 font-bold text-xs sm:text-sm flex items-center justify-between";
+          btnEl.className = "error-tag-btn p-2.5 rounded-xl border-2 border-rose-500 bg-rose-100 text-rose-900 font-bold text-xs sm:text-sm flex items-center justify-between";
 
           detData.streak = 0;
           detData.score = Math.max(0, detData.score - 2);
 
-          let hintText = "";
-          if (!isStepCorrect) {
-            hintText = `Bạn ấy bị nhầm ở <strong>Dòng ${c.errorStep}</strong> cơ! `;
-          } else {
-            hintText = `Em chỉ đúng dòng ${c.errorStep} rồi nhưng loại bẫy chưa chuẩn. `;
-          }
+          let hintText = !isStepCorrect 
+            ? `Dòng bị sai thực tế là <strong>Dòng ${c.errorStep}</strong>. ` 
+            : `Đã chọn đúng dòng ${c.errorStep} nhưng loại bẫy chưa chuẩn xác. `;
 
           this.dom.chalkStatus.textContent = "⚠️ CHƯA CHÍNH XÁC";
           this.dom.chalkContent.innerHTML = `
-            <div class="text-rose-300 font-bold text-sm">❌ Thám tử bắt nhầm bệnh rồi!</div>
+            <div class="text-rose-300 font-bold text-sm">❌ Bắt nhầm lỗi rồi thám tử ơi!</div>
             <p class="text-white text-xs mt-1">${hintText}</p>
             <div class="p-3 bg-emerald-800/80 rounded-xl text-emerald-100 text-xs mt-2 border border-emerald-600">
-              <strong>Bài học chuẩn của Thầy Huy:</strong> ${c.advice}
+              <strong>Bí kíp của Thầy Huy:</strong> ${c.advice}
             </div>
           `;
         }
@@ -1026,7 +951,6 @@
         })).sort((a, b) => b.score - a.score || b.solved - a.solved);
 
         const medals = ['🥇', '🥈', '🥉', '🏅', '🏅', '🏅'];
-
         list.forEach((item, idx) => {
           const row = document.createElement('div');
           row.className = "flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-slate-50";
@@ -1045,12 +969,11 @@
           `;
           this.dom.leaderboardTable.appendChild(row);
         });
-
         this.dom.modalLeaderboard.classList.remove('hidden');
       }
 
       resetScores() {
-        if (confirm("Thầy Huy có chắc chắn muốn đặt lại điểm của toàn bộ học sinh về 0 để bắt đầu buổi học mới?")) {
+        if (confirm("Thầy Huy có muốn đặt lại điểm toàn bộ học sinh về 0 để bắt đầu buổi học mới?")) {
           this.detectives.forEach(name => {
             this.scores[name] = { solved: 0, score: 0, streak: 0 };
           });
@@ -1061,42 +984,23 @@
       }
 
       bindEvents() {
-        // Change Detective
-        this.dom.btnChangeDetective.addEventListener('click', () => {
-          audio.click();
-          this.dom.modalSelectDetective.classList.remove('hidden');
-        });
-
-        // Step 1 to Step 2
         this.dom.btnNextStep.addEventListener('click', () => this.handleProceedToStep2());
-
-        // Tag buttons
         this.dom.tagButtons.forEach(btn => {
           btn.addEventListener('click', () => this.handleTagSelect(btn.dataset.tag, btn));
         });
-
-        // Next case button
         this.dom.btnNextCase.addEventListener('click', () => this.nextCase());
-
-        // Filters
         this.dom.filterButtons.forEach(btn => {
           btn.addEventListener('click', () => {
             audio.click();
             this.applyFilter(btn.dataset.filter);
           });
         });
-
-        // Leaderboard modal
         this.dom.btnLeaderboard.addEventListener('click', () => this.openLeaderboard());
         this.dom.btnCloseLeaderboard.addEventListener('click', () => {
           audio.click();
           this.dom.modalLeaderboard.classList.add('hidden');
         });
-
-        // Reset scores
         this.dom.btnResetScores.addEventListener('click', () => this.resetScores());
-
-        // Notebook modal
         this.dom.btnNotebook.addEventListener('click', () => {
           audio.click();
           this.dom.modalNotebook.classList.remove('hidden');
@@ -1105,59 +1009,18 @@
           audio.click();
           this.dom.modalNotebook.classList.add('hidden');
         });
-
-        // Form Add Case
-        this.dom.formAddCase.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const category = document.getElementById('input-category').value;
-          const student = document.getElementById('input-student').value;
-          const problem = document.getElementById('input-problem').value.trim();
-          const rawSteps = document.getElementById('input-steps').value.trim().split('\n').filter(s => s.trim().length > 0);
-          const errorStep = parseInt(document.getElementById('input-error-step').value);
-          const errorTag = document.getElementById('input-error-tag').value;
-          const advice = document.getElementById('input-advice').value.trim();
-
-          const catMap = {
-            decimal: "Số thập phân",
-            triangle: "Diện tích tam giác",
-            circle: "Hình tròn",
-            trapezoid: "Diện tích hình thang"
-          };
-
-          const newCase = {
-            id: "case-custom-" + Date.now(),
-            category,
-            categoryName: catMap[category] || "Toán 5",
-            student,
-            problem,
-            steps: rawSteps.map((txt, idx) => ({ num: idx + 1, text: txt })),
-            errorStep,
-            errorTag,
-            advice
-          };
-
-          this.cases.push(newCase);
-          this.saveCases();
-          alert("Thầy Huy đã thêm bài tập mới thành công!");
-          this.dom.formAddCase.reset();
-          this.dom.modalNotebook.classList.add('hidden');
-          this.applyFilter(this.filter);
-        });
-
-        // Export JSON
         this.dom.btnExportJson.addEventListener('click', () => {
           const blob = new Blob([JSON.stringify(this.cases, null, 2)], { type: "application/json" });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = "kmath_lop5_bai_tap_loi_sai.json";
+          a.download = "kmath_lop5_toan_loi_sai.json";
           a.click();
           URL.revokeObjectURL(url);
         });
       }
     }
 
-    // Launch Game on Window Load
     window.addEventListener('DOMContentLoaded', () => {
       new MathDetectiveApp();
     });
