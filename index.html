@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thám Tử Soi Lỗi Toán Lớp 5 - Lớp Thầy Huy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Patrick+Hand&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: radial-gradient(circle at 10% 20%, #fef3c7 0%, #ecfdf5 45%, #e0f2fe 90%);
+      min-height: 100vh;
+    }
+    .handwriting {
+      font-family: 'Patrick Hand', cursive;
+    }
+    .mono-code {
+      font-family: 'Fira Code', monospace;
+    }
+    .notebook-paper {
+      background: #ffffff;
+      background-image: 
+        linear-gradient(90deg, transparent 49px, #fca5a5 49px, #fca5a5 51px, transparent 51px),
+        linear-gradient(#e2e8f0 1px, transparent 1px);
+      background-size: 100% 100%, 100% 32px;
+      line-height: 32px;
+    }
+    .chalkboard {
+      background: #1e3a2f;
+      border: 10px solid #854d0e;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.6), 0 10px 25px rgba(0,0,0,0.25);
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .pulse-card {
+      animation: pulse-subtle 2.5s infinite ease-in-out;
+    }
+    canvas#confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-amber-200">
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Top Navigation Header -->
+  <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-amber-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl filter drop-shadow">🔍</span>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-black text-amber-700 tracking-tight">THÁM TỬ SOI LỖI TOÁN LỚP 5</h1>
+            <span class="bg-gradient-to-r from-red-500 to-amber-500 text-white text-xs font-black px-2.5 py-0.5 rounded-full shadow-sm">LỚP THẦY HUY</span>
+          </div>
+          <p class="text-xs text-slate-500 font-semibold">Phát hiện bẫy: Số thập phân • Tam giác • Hình tròn • Hình thang</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="btn-leaderboard" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold text-xs sm:text-sm transition">
+          🏆 Bảng Vàng Lớp
+        </button>
+        <button id="btn-notebook" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold text-xs sm:text-sm transition">
+          📋 Sổ Tay Thầy Huy
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Active Detective Profile Bar -->
+    <div id="active-detective-bar" class="mb-6 bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div id="detective-avatar" class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl font-black shadow-inner">
+          🕵️‍♂️
+        </div>
+        <div>
+          <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">Thám tử nhí trực ban</div>
+          <div id="detective-name" class="text-lg font-black text-slate-800 flex items-center gap-2">
+            Đang chờ chọn thám tử...
+            <button id="btn-change-detective" class="text-xs text-sky-600 underline font-semibold ml-2 hover:text-sky-800">Đổi bạn khác</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div class="text-center">
+          <div class="text-xs text-slate-400 font-bold">Vụ án phá được</div>
+          <div id="stat-solved" class="text-lg font-black text-emerald-600">0 / 0</div>
+        </div>
+        <div class="h-8 w-px bg-slate-200"></div>
+        <div class="text-center">
+          <div class="text-xs text-slate-400 font-bold">Điểm vinh danh</div>
+          <div id="stat-score" class="text-lg font-black text-amber-600">0 ⭐</div>
+        </div>
+        <div class="h-8 w-px bg-slate-200"></div>
+        <div class="text-center">
+          <div class="text-xs text-slate-400 font-bold">Chuỗi đúng (Streak)</div>
+          <div id="stat-streak" class="text-lg font-black text-rose-500">🔥 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topic Filter Bar -->
+    <div class="mb-6 flex flex-wrap items-center gap-2">
+      <span class="text-xs font-bold text-slate-500 mr-2">Chuyên đề soi lỗi:</span>
+      <button class="filter-btn active px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition shadow-sm" data-filter="all">Tất cả bài tập (12)</button>
+      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="decimal">Số thập phân</button>
+      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="triangle">Diện tích tam giác</button>
+      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="circle">Hình tròn (C & S)</button>
+      <button class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition" data-filter="trapezoid">Diện tích hình thang</button>
+    </div>
+
+    <!-- MAIN GAME ARENA -->
+    <div id="game-arena" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Left Column: Student Exam Paper (Vụ Án Cần Soi) -->
+      <section class="lg:col-span-7 bg-white rounded-3xl p-6 shadow-md border-2 border-amber-200 relative overflow-hidden">
+        <!-- Paper Top Header -->
+        <div class="flex items-center justify-between pb-4 border-b-2 border-dashed border-amber-300 mb-4">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl" id="suspect-avatar">📝</span>
+            <div>
+              <div class="text-xs font-bold text-amber-700 uppercase tracking-wider">Bài làm cần kiểm tra</div>
+              <div id="suspect-student" class="text-base font-black text-slate-800">Bạn: Minh Khang</div>
+            </div>
+          </div>
+          <span id="case-category-badge" class="px-3 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">
+            Số thập phân
+          </span>
+        </div>
+
+        <!-- Problem Statement -->
+        <div class="mb-5 bg-amber-50/70 p-4 rounded-2xl border border-amber-200">
+          <div class="text-xs font-black text-amber-800 uppercase tracking-wide mb-1 flex items-center gap-1.5">
+            <span>📌</span> Đề bài Thầy Huy giao:
+          </div>
+          <div id="problem-text" class="text-slate-800 text-base sm:text-lg font-bold leading-relaxed">
+            ...
+          </div>
+        </div>
+
+        <!-- Instructions Step 1 -->
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            👉 BƯỚC 1: Bấm vào dòng chứa lỗi sai dưới đây
+          </span>
+          <span id="selected-step-indicator" class="text-xs font-black text-rose-600 hidden">
+            Đã chọn dòng <span id="indicator-num">1</span>
+          </span>
+        </div>
+
+        <!-- Interactive Student Solution Lines -->
+        <div id="solution-lines-container" class="space-y-3 notebook-paper p-4 rounded-2xl border border-slate-200 shadow-inner">
+          <!-- Dynamic Steps rendered here -->
+        </div>
+
+        <!-- Confirm Step 1 Button -->
+        <div class="mt-5 flex justify-end">
+          <button id="btn-next-step" disabled class="px-5 py-2.5 rounded-2xl bg-slate-300 text-slate-500 font-black text-sm cursor-not-allowed transition flex items-center gap-2 shadow-sm">
+            <span>Tiếp tục bắt bệnh lỗi</span>
+            <span>➔</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Right Column: Chalkboard & Tagging Step 2 -->
+      <section class="lg:col-span-5 space-y-6">
+        
+        <!-- Step 2 Box: Error Tagging (Bắt Bệnh Nhóm Lỗi) -->
+        <div id="tagging-panel" class="bg-white rounded-3xl p-5 shadow-md border-2 border-slate-200 transition-all opacity-50 pointer-events-none">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xl">🏷️</span>
+            <h2 class="text-base font-black text-slate-800">BƯỚC 2: Bắt bệnh loại lỗi sai</h2>
+          </div>
+          <p class="text-xs text-slate-500 mb-4 font-semibold">Theo em, bạn ấy đã mắc phải loại bẫy nào của Thầy Huy?</p>
+
+          <div class="grid grid-cols-1 gap-2.5" id="tag-buttons-container">
+            <button class="error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="quen_chia_2">
+              <span class="flex items-center gap-2"><span>⚠️</span> Quên chia 2 (Tam giác / Hình thang)</span>
+              <span class="text-xs opacity-50">#1</span>
+            </button>
+            <button class="error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="chep_nham_so">
+              <span class="flex items-center gap-2"><span>✏️</span> Nhầm số / Nhầm d với r / Đảo số</span>
+              <span class="text-xs opacity-50">#2</span>
+            </button>
+            <button class="error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="nham_cong_thuc">
+              <span class="flex items-center gap-2"><span>📐</span> Nhầm công thức hình (Chu vi sang diện tích...)</span>
+              <span class="text-xs opacity-50">#3</span>
+            </button>
+            <button class="error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="tinh_toan_phay">
+              <span class="flex items-center gap-2"><span>🧮</span> Tính toán sai / Lỗi dấu phẩy thập phân</span>
+              <span class="text-xs opacity-50">#4</span>
+            </button>
+            <button class="error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between" data-tag="sai_loi_giai">
+              <span class="flex items-center gap-2"><span>📝</span> Sai câu lời giải / Nhầm đơn vị đo</span>
+              <span class="text-xs opacity-50">#5</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Chalkboard Feedback Box (Bảng Đen Thầy Huy) -->
+        <div id="chalkboard-panel" class="chalkboard rounded-3xl p-5 text-white shadow-xl relative min-h-[260px] flex flex-col justify-between">
+          <div class="chalk-dust">
+            <div class="flex items-center justify-between pb-3 border-b border-emerald-700/60 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">👨‍🏫</span>
+                <span class="font-black text-amber-300 text-sm tracking-wide">BẢNG ĐEN THẦY HUY DẶN DÒ</span>
+              </div>
+              <span class="text-[10px] bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full font-mono">K-MATH LỚP 5</span>
+            </div>
+
+            <!-- Feedback Content -->
+            <div id="chalk-content" class="text-sm space-y-3 handwriting text-emerald-100 text-base leading-relaxed">
+              <p>Chào thám tử nhí! Hãy đọc thật kỹ đề bài và bài giải bên trái.</p>
+              <p class="text-amber-200">🔍 Bước 1: Bấm vào dòng làm sai.</p>
+              <p class="text-amber-200">🏷️ Bước 2: Bắt đúng tên bẫy mà bạn đã dính phải nhé!</p>
+            </div>
+          </div>
+
+          <div id="chalk-footer" class="pt-3 mt-4 border-t border-emerald-800/80 flex items-center justify-between text-xs">
+            <span class="text-emerald-300 font-mono" id="chalk-status">Trạng thái: Đang soi bài...</span>
+            <button id="btn-next-case" class="hidden px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs transition shadow-lg flex items-center gap-1.5">
+              <span>Vụ án tiếp theo</span>
+              <span>➔</span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <!-- MODAL 1: CHỌN THÁM TỬ (MINH KHANG, HẢI ĐĂNG, NGỌC DIỆP, NGỌC NAM, LINH ANH, MINH ANH) -->
+  <div id="modal-select-detective" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-4 border-amber-300 text-center animate-scale-up">
+      <div class="text-5xl mb-2">🕵️‍♀️🕵️‍♂️</div>
+      <h2 class="text-2xl font-black text-amber-800">Chào Mừng Đến Lớp Thầy Huy!</h2>
+      <p class="text-slate-600 text-sm mt-1 mb-5 font-semibold">Em hãy chọn tên của mình để bắt đầu vào ca trực thám tử soi lỗi nhé:</p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6" id="detective-roster-list">
+        <!-- Roster injected by JS -->
+      </div>
+
+      <div class="text-xs text-slate-400 font-medium italic">
+        "Không có lỗi sai nào thoát khỏi mắt thám tử nhí lớp Thầy Huy!"
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: BẢNG VÀNG LỚP THẦY HUY -->
+  <div id="modal-leaderboard" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-amber-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🏆</span>
+          <h3 class="text-lg font-black text-slate-800">Bảng Vàng Danh Dự Lớp Thầy Huy</h3>
+        </div>
+        <button id="btn-close-leaderboard" class="text-slate-400 hover:text-slate-700 text-xl font-black">&times;</button>
+      </div>
+
+      <div class="space-y-2.5 max-h-72 overflow-y-auto pr-1" id="leaderboard-table">
+        <!-- Rendered by JS -->
+      </div>
+
+      <button id="btn-reset-scores" class="mt-5 w-full py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition border border-dashed border-slate-200">
+        Đặt lại bảng điểm (Khi bắt đầu buổi học mới)
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 3: SỔ TAY THẦY HUY (QUẢN LÝ & NHẬP THÊM BÀI TẬP) -->
+  <div id="modal-notebook" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border-2 border-emerald-200 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📋</span>
+          <div>
+            <h3 class="text-lg font-black text-emerald-800">Sổ Tay Biên Soạn Của Thầy Huy</h3>
+            <p class="text-xs text-slate-500">Thêm bài tập thực tế từ lỗi sai trên lớp của học sinh</p>
+          </div>
+        </div>
+        <button id="btn-close-notebook" class="text-slate-400 hover:text-slate-700 text-xl font-black">&times;</button>
+      </div>
+
+      <form id="form-add-case" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Chuyên đề:</label>
+          <select id="input-category" class="w-full p-2.5 rounded-xl border border-slate-200 font-semibold bg-slate-50">
+            <option value="decimal">Tính toán số thập phân</option>
+            <option value="triangle">Diện tích hình tam giác</option>
+            <option value="circle">Diện tích & Chu vi hình tròn</option>
+            <option value="trapezoid">Diện tích hình thang</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Học sinh làm bài này:</label>
+          <select id="input-student" class="w-full p-2.5 rounded-xl border border-slate-200 font-semibold bg-slate-50">
+            <option value="Minh Khang">Minh Khang</option>
+            <option value="Hải Đăng">Hải Đăng</option>
+            <option value="Ngọc Diệp">Ngọc Diệp</option>
+            <option value="Ngọc Nam">Ngọc Nam</option>
+            <option value="Linh Anh">Linh Anh</option>
+            <option value="Minh Anh">Minh Anh</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Đề bài Thầy giao:</label>
+          <textarea id="input-problem" rows="2" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium" placeholder="Ví dụ: Tính diện tích tam giác có đáy 8cm, chiều cao 5cm..." required></textarea>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Các dòng giải của bạn (Mỗi dòng một bước):</label>
+          <textarea id="input-steps" rows="3" class="w-full p-2.5 rounded-xl border border-slate-200 font-mono" placeholder="Dòng 1: Chiều cao tam giác là...&#10;Dòng 2: Diện tích tam giác là: 8 x 5 = 40 (cm2)&#10;Dòng 3: Đáp số: 40 cm2" required></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Dòng mắc lỗi sai:</label>
+            <select id="input-error-step" class="w-full p-2.5 rounded-xl border border-slate-200 font-semibold">
+              <option value="1">Dòng 1</option>
+              <option value="2" selected>Dòng 2</option>
+              <option value="3">Dòng 3</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Nhóm lỗi:</label>
+            <select id="input-error-tag" class="w-full p-2.5 rounded-xl border border-slate-200 font-semibold">
+              <option value="quen_chia_2">Quên chia 2</option>
+              <option value="chep_nham_so">Nhầm số / Bán kính</option>
+              <option value="nham_cong_thuc">Nhầm công thức hình</option>
+              <option value="tinh_toan_phay">Tính toán / Dấu phẩy</option>
+              <option value="sai_loi_giai">Sai lời giải / Đơn vị</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Thầy Huy dặn dò & Lời giải chuẩn:</label>
+          <textarea id="input-advice" rows="2" class="w-full p-2.5 rounded-xl border border-slate-200 font-medium" placeholder="Bạn đã quên chia 2 khi tính diện tích tam giác! Công thức chuẩn là S = (a x h) : 2 = (8 x 5) : 2 = 20 cm2..." required></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-between gap-3">
+          <button type="button" id="btn-export-json" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">
+            📥 Xuất File JSON
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black shadow-md">
+            Lưu vào Game
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC & AUDIO ENGINE -->
+  <script>
+    /* ==========================================================================
+       1. WEB AUDIO API SOUND ENGINE (Âm thanh vui nhộn không cần file ngoài)
+       ========================================================================== */
+    class MathAudioEngine {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playNote(freq, type = 'sine', duration = 0.15, gainVal = 0.1) {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      }
+      click() {
+        this.playNote(800, 'triangle', 0.05, 0.05);
+      }
+      stepSelect() {
+        this.playNote(520, 'sine', 0.1, 0.1);
+      }
+      success() {
+        this.init();
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+          setTimeout(() => {
+            this.playNote(freq, 'triangle', 0.25, 0.15);
+          }, idx * 75);
+        });
+      }
+      wrong() {
+        this.init();
+        this.playNote(220, 'sawtooth', 0.2, 0.15);
+        setTimeout(() => this.playNote(180, 'sawtooth', 0.3, 0.15), 120);
+      }
+      streakFanfare() {
+        this.init();
+        const notes = [440, 554, 659, 880, 1108];
+        notes.forEach((freq, idx) => {
+          setTimeout(() => {
+            this.playNote(freq, 'sine', 0.3, 0.2);
+          }, idx * 60);
+        });
+      }
+    }
+    const audio = new MathAudioEngine();
+
+    /* ==========================================================================
+       2. CANVAS CONFETTI ENGINE (Pháo hoa ăn mừng)
+       ========================================================================== */
+    class ConfettiEffect {
+      constructor() {
+        this.canvas = document.getElementById('confetti-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.animationId = null;
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+      }
+      resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+      fire(amount = 70) {
+        const colors = ['#f59e0b', '#ef4444', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'];
+        for (let i = 0; i < amount; i++) {
+          this.particles.push({
+            x: this.canvas.width / 2,
+            y: this.canvas.height / 2,
+            vx: (Math.random() - 0.5) * 16,
+            vy: (Math.random() - 0.7) * 16,
+            size: Math.random() * 8 + 4,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * 360,
+            vRot: (Math.random() - 0.5) * 10,
+            alpha: 1
+          });
+        }
+        if (!this.animationId) {
+          this.loop();
+        }
+      }
+      loop() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35; // gravity
+          p.vx *= 0.98;
+          p.rotation += p.vRot;
+          p.alpha -= 0.012;
+
+          this.ctx.save();
+          this.ctx.translate(p.x, p.y);
+          this.ctx.rotate((p.rotation * Math.PI) / 180);
+          this.ctx.fillStyle = p.color;
+          this.ctx.globalAlpha = Math.max(p.alpha, 0);
+          this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          this.ctx.restore();
+
+          if (p.alpha <= 0 || p.y > this.canvas.height + 20) {
+            this.particles.splice(i, 1);
+          }
+        }
+        if (this.particles.length > 0) {
+          this.animationId = requestAnimationFrame(() => this.loop());
+        } else {
+          cancelAnimationFrame(this.animationId);
+          this.animationId = null;
+        }
+      }
+    }
+    const confetti = new ConfettiEffect();
+
+    /* ==========================================================================
+       3. NGÂN HÀNG BÀI TẬP BẪY KINH ĐIỂN LỚP 5 - LỚP THẦY HUY
+          Chuyên đề: Số thập phân, Tam giác, Hình tròn, Hình thang
+       ========================================================================== */
+    const ROSTER_NAMES = ["Minh Khang", "Hải Đăng", "Ngọc Diệp", "Ngọc Nam", "Linh Anh", "Minh Anh"];
+
+    const DEFAULT_CASES = [
+      // 1. Số thập phân: Bẫy trừ khuyết hàng phần trăm
+      {
+        id: "case-dec-1",
+        category: "decimal",
+        categoryName: "Số thập phân",
+        student: "Minh Khang",
+        problem: "Thực hiện phép tính trừ hai số thập phân: 15,3 - 4,85",
+        steps: [
+          { num: 1, text: "Đặt tính thẳng cột: hàng chục theo chục, đơn vị theo đơn vị, dấu phẩy thẳng cột." },
+          { num: 2, text: "Thực hiện trừ từ phải sang trái: Hạ 5 ở hàng phần trăm xuống được 5." },
+          { num: 3, text: "Lấy 13 trừ 8 được 5 viết 5 nhớ 1; 15 trừ (4+1) được 10. Kết quả là 10,55." }
+        ],
+        errorStep: 2,
+        errorTag: "tinh_toan_phay",
+        advice: "Minh Khang quên mượn ở hàng phần trăm khuyết! 15,3 phải hiểu là 15,30. Khi trừ phải lấy 0 trừ 5 (10 trừ 5 được 5 nhớ 1), mượn 1 sang hàng phần mười. Kết quả đúng phải là 10,45!"
+      },
+      // 2. Số thập phân: Bẫy đếm thiếu chữ số phần thập phân khi nhân
+      {
+        id: "case-dec-2",
+        category: "decimal",
+        categoryName: "Số thập phân",
+        student: "Hải Đăng",
+        problem: "Tính diện tích một mảnh bìa hình chữ nhật có chiều dài 2,4 m và chiều rộng 0,5 m.",
+        steps: [
+          { num: 1, text: "Diện tích mảnh bìa hình chữ nhật là:" },
+          { num: 2, text: "2,4 × 0,5 = 12 (m²)" },
+          { num: 3, text: "Đáp số: 12 m²" }
+        ],
+        errorStep: 2,
+        errorTag: "tinh_toan_phay",
+        advice: "Hải Đăng tính 24 × 5 = 120 rất nhanh nhưng quên đếm chữ số thập phân! Thừa số 2,4 có 1 chữ số, 0,5 có 1 chữ số → Tổng cộng 2 chữ số thập phân. 120 lùi 2 dấu phẩy phải là 1,20 = 1,2 m² chứ không thể là 12 m²!"
+      },
+      // 3. Số thập phân: Bẫy chia số thập phân quên thêm 0 khi hạ dư
+      {
+        id: "case-dec-3",
+        category: "decimal",
+        categoryName: "Số thập phân",
+        student: "Ngọc Diệp",
+        problem: "Thực hiện phép chia số thập phân cho số tự nhiên: 12,36 : 6",
+        steps: [
+          { num: 1, text: "Lấy phần nguyên 12 chia 6 được 2, dư 0. Đánh dấu phẩy vào thương: 2," },
+          { num: 2, text: "Hạ 3 xuống, 3 không chia được cho 6 nên hạ tiếp 6 được 36; 36 chia 6 được 6." },
+          { num: 3, text: "Kết quả phép tính là: 2,6." }
+        ],
+        errorStep: 2,
+        errorTag: "tinh_toan_phay",
+        advice: "Ngọc Diệp mắc lỗi kinh điển khi chia! Khi hạ 3 xuống, vì 3 < 6 nên ta PHẢI VIẾT 0 VÀO THƯƠNG rồi mới hạ tiếp chữ số 6. Kết quả chuẩn xác là 2,06 chứ không phải 2,6!"
+      },
+      // 4. Tam giác: Bẫy quên chia 2
+      {
+        id: "case-tri-1",
+        category: "triangle",
+        categoryName: "Diện tích tam giác",
+        student: "Ngọc Nam",
+        problem: "Tính diện tích hình tam giác có độ dài đáy là 14 cm và chiều cao tương ứng là 8 cm.",
+        steps: [
+          { num: 1, text: "Diện tích hình tam giác là:" },
+          { num: 2, text: "14 × 8 = 112 (cm²)" },
+          { num: 3, text: "Đáp số: 112 cm²" }
+        ],
+        errorStep: 2,
+        errorTag: "quen_chia_2",
+        advice: "Ngọc Nam đã quên chia 2 rồi! Công thức tính diện tích hình tam giác là S = (đáy × chiều cao) : 2. Bài chuẩn phải là (14 × 8) : 2 = 56 cm²!"
+      },
+      // 5. Tam giác: Bẫy không đổi đồng nhất đơn vị đo đáy và chiều cao
+      {
+        id: "case-tri-2",
+        category: "triangle",
+        categoryName: "Diện tích tam giác",
+        student: "Linh Anh",
+        problem: "Một bồn hoa hình tam giác có cạnh đáy dài 2 m và chiều cao là 15 dm. Tính diện tích bồn hoa đó.",
+        steps: [
+          { num: 1, text: "Diện tích bồn hoa hình tam giác là:" },
+          { num: 2, text: "(2 × 15) : 2 = 15 (m²)" },
+          { num: 3, text: "Đáp số: 15 m²" }
+        ],
+        errorStep: 2,
+        errorTag: "sai_loi_giai",
+        advice: "Linh Anh đã vội vàng nhân ngay khi chưa đồng nhất đơn vị đo! Đáy là 2 m = 20 dm. Diện tích chuẩn phải là (20 × 15) : 2 = 150 dm² (hoặc 1,5 m²). Nhớ quy tắc Thầy Huy dặn: 'Khác đơn vị thì phải đổi trước khi tính'!"
+      },
+      // 6. Tam giác: Bẫy nhân nhầm cạnh bên thay vì chiều cao
+      {
+        id: "case-tri-3",
+        category: "triangle",
+        categoryName: "Diện tích tam giác",
+        student: "Minh Anh",
+        problem: "Cho tam giác nhọn ABC có đáy BC = 10 cm, cạnh bên AB = 8 cm, chiều cao AH hạ từ đỉnh A xuống BC là 6 cm. Tính diện tích tam giác ABC.",
+        steps: [
+          { num: 1, text: "Diện tích hình tam giác ABC là:" },
+          { num: 2, text: "(10 × 8) : 2 = 40 (cm²)" },
+          { num: 3, text: "Đáp số: 40 cm²" }
+        ],
+        errorStep: 2,
+        errorTag: "nham_cong_thuc",
+        advice: "Minh Anh đã lấy nhầm độ dài cạnh bên AB thay vì chiều cao AH! Công thức là (đáy × chiều cao tương ứng) : 2. Phép tính chuẩn: (10 × 6) : 2 = 30 cm²!"
+      },
+      // 7. Hình tròn: Bẫy nhầm đường kính d thành bán kính r
+      {
+        id: "case-cir-1",
+        category: "circle",
+        categoryName: "Hình tròn",
+        student: "Minh Khang",
+        problem: "Tính diện tích của một biển báo giao thông hình tròn có đường kính d = 40 cm.",
+        steps: [
+          { num: 1, text: "Diện tích của biển báo giao thông hình tròn là:" },
+          { num: 2, text: "40 × 40 × 3,14 = 5024 (cm²)" },
+          { num: 3, text: "Đáp số: 5024 cm²" }
+        ],
+        errorStep: 2,
+        errorTag: "chep_nham_so",
+        advice: "Minh Khang mắc bẫy lớn nhất của đề thi lớp 5! Đề bài cho 'đường kính d = 40 cm', muốn tính diện tích phải tìm bán kính trước: r = 40 : 2 = 20 cm. Sau đó mới tính: 20 × 20 × 3,14 = 1256 cm²!"
+      },
+      // 8. Hình tròn: Bẫy nhầm công thức diện tích sang chu vi
+      {
+        id: "case-cir-2",
+        category: "circle",
+        categoryName: "Hình tròn",
+        student: "Hải Đăng",
+        problem: "Tính diện tích hình tròn có bán kính r = 5 cm.",
+        steps: [
+          { num: 1, text: "Diện tích hình tròn là:" },
+          { num: 2, text: "5 × 2 × 3,14 = 31,4 (cm²)" },
+          { num: 3, text: "Đáp số: 31,4 cm²" }
+        ],
+        errorStep: 2,
+        errorTag: "nham_cong_thuc",
+        advice: "Hải Đăng đã nhầm sang công thức Chu vi rồi! Chu vi là r × 2 × 3,14, còn Diện tích phải là Bán kính nhân Bán kính: S = r × r × 3,14 = 5 × 5 × 3,14 = 78,5 cm²!"
+      },
+      // 9. Hình tròn: Bẫy viết nhầm r x r thành r x 2
+      {
+        id: "case-cir-3",
+        category: "circle",
+        categoryName: "Hình tròn",
+        student: "Ngọc Diệp",
+        problem: "Một chiếc đĩa sứ hình tròn có bán kính 6 cm. Tính diện tích bề mặt của chiếc đĩa.",
+        steps: [
+          { num: 1, text: "Diện tích bề mặt chiếc đĩa sứ là:" },
+          { num: 2, text: "6 × 2 × 3,14 = 37,68 (cm²)" },
+          { num: 3, text: "Đáp số: 37,68 cm²" }
+        ],
+        errorStep: 2,
+        errorTag: "nham_cong_thuc",
+        advice: "Ngọc Diệp nhầm lẫn giữa 'bán kính nhân bán kính' và 'bán kính nhân 2'! Phải là 6 × 6 × 3,14 = 113,04 cm². Thầy Huy luôn nhắc: 'Diện tích thì r nhân r, chu vi mới là r nhân 2'!"
+      },
+      // 10. Hình thang: Bẫy quên chia 2
+      {
+        id: "case-trap-1",
+        category: "trapezoid",
+        categoryName: "Diện tích hình thang",
+        student: "Ngọc Nam",
+        problem: "Tính diện tích mảnh đất hình thang có đáy lớn 12 m, đáy bé 8 m và chiều cao 6 m.",
+        steps: [
+          { num: 1, text: "Diện tích mảnh đất hình thang là:" },
+          { num: 2, text: "(12 + 8) × 6 = 120 (m²)" },
+          { num: 3, text: "Đáp số: 120 m²" }
+        ],
+        errorStep: 2,
+        errorTag: "quen_chia_2",
+        advice: "Ngọc Nam lại quên chia 2 rồi! Nhớ bài thơ Thầy dạy: 'Muốn tính diện tích hình thang / Đáy lớn đáy nhỏ ta mang cộng vào / Cộng vào nhân với chiều cao / CHIA ĐÔI MỘT NỬA thế nào cũng ra'. Chuẩn là (12 + 8) × 6 : 2 = 60 m²!"
+      },
+      // 11. Hình thang: Bẫy quên ngoặc tròn dẫn đến sai thứ tự phép tính
+      {
+        id: "case-trap-2",
+        category: "trapezoid",
+        categoryName: "Diện tích hình thang",
+        student: "Linh Anh",
+        problem: "Một thửa ruộng hình thang có đáy lớn 25 m, đáy bé 15 m và chiều cao 10 m. Tính diện tích thửa ruộng.",
+        steps: [
+          { num: 1, text: "Diện tích thửa ruộng hình thang là:" },
+          { num: 2, text: "25 + 15 × 10 : 2 = 100 (m²)" },
+          { num: 3, text: "Đáp số: 100 m²" }
+        ],
+        errorStep: 2,
+        errorTag: "nham_cong_thuc",
+        advice: "Linh Anh quên đóng mở ngoặc đơn ở tổng hai đáy! Khi viết 25 + 15 × 10 : 2, theo quy tắc tính toán bạn đã nhân chia trước (15 × 10 : 2 = 75) rồi mới cộng 25 ra 100. Đúng chuẩn phải có ngoặc: (25 + 15) × 10 : 2 = 40 × 10 : 2 = 200 m²!"
+      },
+      // 12. Hình thang: Bẫy khác đơn vị đo hai đáy
+      {
+        id: "case-trap-3",
+        category: "trapezoid",
+        categoryName: "Diện tích hình thang",
+        student: "Minh Anh",
+        problem: "Tính diện tích hình thang có đáy lớn là 3 m, đáy bé là 18 dm và chiều cao là 12 dm.",
+        steps: [
+          { num: 1, text: "Diện tích hình thang đã cho là:" },
+          { num: 2, text: "(3 + 18) × 12 : 2 = 126 (dm²)" },
+          { num: 3, text: "Đáp số: 126 dm²" }
+        ],
+        errorStep: 2,
+        errorTag: "sai_loi_giai",
+        advice: "Minh Anh chưa đổi đơn vị đáy lớn! Đáy lớn đang là 3 m = 30 dm. Phép tính chuẩn phải là: (30 + 18) × 12 : 2 = 48 × 12 : 2 = 288 dm²!"
+      }
+    ];
+
+    /* ==========================================================================
+       4. GAME STATE CONTROLLER
+       ========================================================================== */
+    class MathDetectiveApp {
+      constructor() {
+        this.detectives = ROSTER_NAMES;
+        this.currentDetective = localStorage.getItem('kmath_active_detective') || null;
+        this.cases = this.loadCases();
+        this.filter = 'all';
+        this.currentCaseIndex = 0;
+        this.filteredCases = [];
+        this.selectedStep = null;
+        this.isStep1Locked = false;
+        this.scores = this.loadScores();
+
+        this.initDOMElements();
+        this.bindEvents();
+        this.setupApp();
+      }
+
+      loadCases() {
+        const saved = localStorage.getItem('kmath_cases_v2');
+        if (saved) {
+          try { return JSON.parse(saved); } catch(e) {}
+        }
+        return DEFAULT_CASES;
+      }
+
+      saveCases() {
+        localStorage.setItem('kmath_cases_v2', JSON.stringify(this.cases));
+      }
+
+      loadScores() {
+        const saved = localStorage.getItem('kmath_scores_v2');
+        if (saved) {
+          try { return JSON.parse(saved); } catch(e) {}
+        }
+        const initial = {};
+        this.detectives.forEach(name => {
+          initial[name] = { solved: 0, score: 0, streak: 0 };
+        });
+        return initial;
+      }
+
+      saveScores() {
+        localStorage.setItem('kmath_scores_v2', JSON.stringify(this.scores));
+      }
+
+      initDOMElements() {
+        this.dom = {
+          detectiveAvatar: document.getElementById('detective-avatar'),
+          detectiveName: document.getElementById('detective-name'),
+          btnChangeDetective: document.getElementById('btn-change-detective'),
+          statSolved: document.getElementById('stat-solved'),
+          statScore: document.getElementById('stat-score'),
+          statStreak: document.getElementById('stat-streak'),
+          suspectStudent: document.getElementById('suspect-student'),
+          suspectAvatar: document.getElementById('suspect-avatar'),
+          caseCategoryBadge: document.getElementById('case-category-badge'),
+          problemText: document.getElementById('problem-text'),
+          linesContainer: document.getElementById('solution-lines-container'),
+          selectedStepIndicator: document.getElementById('selected-step-indicator'),
+          indicatorNum: document.getElementById('indicator-num'),
+          btnNextStep: document.getElementById('btn-next-step'),
+          taggingPanel: document.getElementById('tagging-panel'),
+          tagButtons: document.querySelectorAll('.error-tag-btn'),
+          chalkContent: document.getElementById('chalk-content'),
+          chalkStatus: document.getElementById('chalk-status'),
+          btnNextCase: document.getElementById('btn-next-case'),
+          modalSelectDetective: document.getElementById('modal-select-detective'),
+          rosterList: document.getElementById('detective-roster-list'),
+          btnLeaderboard: document.getElementById('btn-leaderboard'),
+          modalLeaderboard: document.getElementById('modal-leaderboard'),
+          btnCloseLeaderboard: document.getElementById('btn-close-leaderboard'),
+          leaderboardTable: document.getElementById('leaderboard-table'),
+          btnResetScores: document.getElementById('btn-reset-scores'),
+          btnNotebook: document.getElementById('btn-notebook'),
+          modalNotebook: document.getElementById('modal-notebook'),
+          btnCloseNotebook: document.getElementById('btn-close-notebook'),
+          formAddCase: document.getElementById('form-add-case'),
+          btnExportJson: document.getElementById('btn-export-json'),
+          filterButtons: document.querySelectorAll('.filter-btn')
+        };
+      }
+
+      setupApp() {
+        this.renderRosterModal();
+        if (!this.currentDetective) {
+          this.dom.modalSelectDetective.classList.remove('hidden');
+        } else {
+          this.setDetective(this.currentDetective);
+        }
+        this.applyFilter('all');
+      }
+
+      renderRosterModal() {
+        this.dom.rosterList.innerHTML = '';
+        const avatars = ['🦁', '🐯', '🐼', '🦊', '🦅', '🐬'];
+        this.detectives.forEach((name, idx) => {
+          const btn = document.createElement('button');
+          btn.className = "flex flex-col items-center justify-center p-3 rounded-2xl border-2 border-amber-200 hover:border-amber-500 hover:bg-amber-50 transition group";
+          btn.innerHTML = `
+            <span class="text-3xl mb-1 group-hover:scale-110 transition transform">${avatars[idx % avatars.length]}</span>
+            <span class="font-extrabold text-sm text-slate-800">${name}</span>
+          `;
+          btn.addEventListener('click', () => {
+            audio.click();
+            this.setDetective(name);
+            this.dom.modalSelectDetective.classList.add('hidden');
+          });
+          this.dom.rosterList.appendChild(btn);
+        });
+      }
+
+      setDetective(name) {
+        this.currentDetective = name;
+        localStorage.setItem('kmath_active_detective', name);
+        if (!this.scores[name]) {
+          this.scores[name] = { solved: 0, score: 0, streak: 0 };
+          this.saveScores();
+        }
+        this.dom.detectiveName.innerHTML = `${name} <button id="btn-change-detective-inline" class="text-xs text-sky-600 underline font-semibold ml-2 hover:text-sky-800">Đổi bạn khác</button>`;
+        document.getElementById('btn-change-detective-inline').addEventListener('click', () => {
+          audio.click();
+          this.dom.modalSelectDetective.classList.remove('hidden');
+        });
+        const avatars = ['🦁', '🐯', '🐼', '🦊', '🦅', '🐬'];
+        const avatarIdx = this.detectives.indexOf(name);
+        this.dom.detectiveAvatar.textContent = avatars[avatarIdx >= 0 ? avatarIdx : 0];
+        this.updateStatsUI();
+      }
+
+      updateStatsUI() {
+        if (!this.currentDetective || !this.scores[this.currentDetective]) return;
+        const s = this.scores[this.currentDetective];
+        this.dom.statSolved.textContent = `${s.solved} / ${this.cases.length}`;
+        this.dom.statScore.textContent = `${s.score} ⭐`;
+        this.dom.statStreak.textContent = `🔥 ${s.streak}`;
+      }
+
+      applyFilter(category) {
+        this.filter = category;
+        this.dom.filterButtons.forEach(btn => {
+          if (btn.dataset.filter === category) {
+            btn.className = "filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition shadow-sm";
+          } else {
+            btn.className = "filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition";
+          }
+        });
+
+        if (category === 'all') {
+          this.filteredCases = [...this.cases];
+        } else {
+          this.filteredCases = this.cases.filter(c => c.category === category);
+        }
+        this.currentCaseIndex = 0;
+        this.loadCurrentCase();
+      }
+
+      loadCurrentCase() {
+        if (this.filteredCases.length === 0) {
+          this.dom.problemText.textContent = "Chưa có bài tập nào trong chuyên đề này!";
+          this.dom.linesContainer.innerHTML = '';
+          return;
+        }
+
+        const c = this.filteredCases[this.currentCaseIndex];
+        this.selectedStep = null;
+        this.isStep1Locked = false;
+
+        // Reset UI Components
+        this.dom.btnNextStep.disabled = true;
+        this.dom.btnNextStep.className = "px-5 py-2.5 rounded-2xl bg-slate-300 text-slate-500 font-black text-sm cursor-not-allowed transition flex items-center gap-2 shadow-sm";
+        this.dom.selectedStepIndicator.classList.add('hidden');
+        this.dom.btnNextCase.classList.add('hidden');
+
+        // Reset Tagging Panel
+        this.dom.taggingPanel.classList.add('opacity-50', 'pointer-events-none');
+        this.dom.tagButtons.forEach(btn => {
+          btn.className = "error-tag-btn p-3 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50 text-left font-bold text-xs sm:text-sm text-slate-700 transition flex items-center justify-between";
+        });
+
+        // Set suspect student & problem
+        this.dom.suspectStudent.textContent = `Bạn: ${c.student} - Lớp Toán 5 Thầy Huy`;
+        this.dom.caseCategoryBadge.textContent = c.categoryName || "Toán 5";
+        this.dom.problemText.textContent = c.problem;
+
+        // Reset Chalkboard
+        this.dom.chalkStatus.textContent = "Trạng thái: Đang soi bài...";
+        this.dom.chalkContent.innerHTML = `
+          <p class="text-amber-200">🔍 <strong>Bước 1:</strong> Thám tử ${this.currentDetective || 'nhí'} hãy đọc bài làm của bạn ${c.student} và bấm chọn DÒNG MẮC LỖI SAI nhé!</p>
+        `;
+
+        // Render Steps
+        this.dom.linesContainer.innerHTML = '';
+        c.steps.forEach(step => {
+          const div = document.createElement('div');
+          div.className = "solution-line p-3 rounded-xl border-2 border-transparent hover:border-amber-300 hover:bg-amber-50/70 transition cursor-pointer flex items-start gap-3";
+          div.dataset.stepNum = step.num;
+          div.innerHTML = `
+            <span class="w-7 h-7 rounded-lg bg-amber-200 text-amber-900 font-black flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+              ${step.num}
+            </span>
+            <div class="text-sm sm:text-base font-semibold text-slate-800 leading-snug">
+              ${step.text}
+            </div>
+          `;
+          div.addEventListener('click', () => this.handleSelectStep(step.num, div));
+          this.dom.linesContainer.appendChild(div);
+        });
+      }
+
+      handleSelectStep(stepNum, el) {
+        if (this.isStep1Locked) return;
+        audio.stepSelect();
+        this.selectedStep = stepNum;
+
+        // Visual selection
+        const allLines = this.dom.linesContainer.querySelectorAll('.solution-line');
+        allLines.forEach(line => {
+          line.classList.remove('border-rose-400', 'bg-rose-50', 'ring-2', 'ring-rose-200');
+        });
+        el.classList.add('border-rose-400', 'bg-rose-50', 'ring-2', 'ring-rose-200');
+
+        this.dom.indicatorNum.textContent = stepNum;
+        this.dom.selectedStepIndicator.classList.remove('hidden');
+
+        // Enable Next Step button
+        this.dom.btnNextStep.disabled = false;
+        this.dom.btnNextStep.className = "px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-black text-sm transition flex items-center gap-2 shadow-md hover:scale-105 transform";
+      }
+
+      handleProceedToStep2() {
+        if (!this.selectedStep || this.isStep1Locked) return;
+        audio.click();
+        this.isStep1Locked = true;
+        this.dom.btnNextStep.disabled = true;
+        this.dom.btnNextStep.classList.add('hidden');
+
+        // Unlock Tagging panel
+        this.dom.taggingPanel.classList.remove('opacity-50', 'pointer-events-none');
+        this.dom.taggingPanel.classList.add('ring-4', 'ring-amber-300');
+
+        this.dom.chalkStatus.textContent = "Trạng thái: Bắt bệnh loại lỗi...";
+        this.dom.chalkContent.innerHTML = `
+          <p class="text-emerald-200">Đã chọn Dòng ${this.selectedStep}.</p>
+          <p class="text-amber-300">🏷️ <strong>Bước 2:</strong> Hãy chọn 1 trong 5 nhãn bẫy bên phải để hoàn tất ca bắt lỗi!</p>
+        `;
+      }
+
+      handleTagSelect(tagKey, btnEl) {
+        const c = this.filteredCases[this.currentCaseIndex];
+        const isStepCorrect = (this.selectedStep === c.errorStep);
+        const isTagCorrect = (tagKey === c.errorTag);
+
+        this.dom.taggingPanel.classList.remove('ring-4', 'ring-amber-300');
+        this.dom.taggingPanel.classList.add('pointer-events-none');
+
+        const detData = this.scores[this.currentDetective];
+
+        if (isStepCorrect && isTagCorrect) {
+          // HOÀN TOÀN CHÍNH XÁC
+          audio.success();
+          confetti.fire(60);
+          btnEl.className = "error-tag-btn p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-100 text-emerald-900 font-black text-xs sm:text-sm flex items-center justify-between";
+
+          detData.solved += 1;
+          detData.streak += 1;
+          const streakBonus = detData.streak > 2 ? 5 : 0;
+          detData.score += (10 + streakBonus);
+
+          if (detData.streak >= 3) {
+            setTimeout(() => audio.streakFanfare(), 400);
+          }
+
+          this.dom.chalkStatus.textContent = "🏆 PHÁ ÁN XUẤT SẮC!";
+          this.dom.chalkContent.innerHTML = `
+            <div class="text-amber-300 font-black text-base">🎉 CHÍNH XÁC HOÀN TOÀN!</div>
+            <p class="text-white text-sm mt-1">Dòng mắc lỗi đúng là Dòng ${c.errorStep}.</p>
+            <div class="p-3 bg-emerald-800/80 rounded-xl text-emerald-100 text-xs mt-2 border border-emerald-600">
+              <strong>Thầy Huy dặn dò:</strong> ${c.advice}
+            </div>
+            ${streakBonus > 0 ? `<div class="text-rose-300 font-bold text-xs mt-1">🔥 Combo chuỗi đúng x${detData.streak}! Tặng thêm ${streakBonus} điểm sao!</div>` : ''}
+          `;
+        } else {
+          // BẮT SAI HOẶC NHẦM DÒNG
+          audio.wrong();
+          btnEl.className = "error-tag-btn p-3 rounded-2xl border-2 border-rose-500 bg-rose-100 text-rose-900 font-bold text-xs sm:text-sm flex items-center justify-between";
+
+          detData.streak = 0;
+          detData.score = Math.max(0, detData.score - 2);
+
+          let hintText = "";
+          if (!isStepCorrect) {
+            hintText = `Bạn ấy bị nhầm ở <strong>Dòng ${c.errorStep}</strong> cơ! `;
+          } else {
+            hintText = `Em chỉ đúng dòng ${c.errorStep} rồi nhưng loại bẫy chưa chuẩn. `;
+          }
+
+          this.dom.chalkStatus.textContent = "⚠️ CHƯA CHÍNH XÁC";
+          this.dom.chalkContent.innerHTML = `
+            <div class="text-rose-300 font-bold text-sm">❌ Thám tử bắt nhầm bệnh rồi!</div>
+            <p class="text-white text-xs mt-1">${hintText}</p>
+            <div class="p-3 bg-emerald-800/80 rounded-xl text-emerald-100 text-xs mt-2 border border-emerald-600">
+              <strong>Bài học chuẩn của Thầy Huy:</strong> ${c.advice}
+            </div>
+          `;
+        }
+
+        this.saveScores();
+        this.updateStatsUI();
+        this.dom.btnNextCase.classList.remove('hidden');
+      }
+
+      nextCase() {
+        audio.click();
+        this.currentCaseIndex = (this.currentCaseIndex + 1) % this.filteredCases.length;
+        this.loadCurrentCase();
+      }
+
+      openLeaderboard() {
+        audio.click();
+        this.dom.leaderboardTable.innerHTML = '';
+        const list = Object.entries(this.scores).map(([name, data]) => ({
+          name, ...data
+        })).sort((a, b) => b.score - a.score || b.solved - a.solved);
+
+        const medals = ['🥇', '🥈', '🥉', '🏅', '🏅', '🏅'];
+
+        list.forEach((item, idx) => {
+          const row = document.createElement('div');
+          row.className = "flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-slate-50";
+          row.innerHTML = `
+            <div class="flex items-center gap-3">
+              <span class="text-xl">${medals[idx] || '⭐'}</span>
+              <div>
+                <div class="font-extrabold text-sm text-slate-800">${item.name}</div>
+                <div class="text-[11px] text-slate-400 font-semibold">Phá ${item.solved} vụ án • Chuỗi: ${item.streak}</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="font-black text-amber-600 text-base">${item.score}</span>
+              <span class="text-xs text-amber-500">⭐</span>
+            </div>
+          `;
+          this.dom.leaderboardTable.appendChild(row);
+        });
+
+        this.dom.modalLeaderboard.classList.remove('hidden');
+      }
+
+      resetScores() {
+        if (confirm("Thầy Huy có chắc chắn muốn đặt lại điểm của toàn bộ học sinh về 0 để bắt đầu buổi học mới?")) {
+          this.detectives.forEach(name => {
+            this.scores[name] = { solved: 0, score: 0, streak: 0 };
+          });
+          this.saveScores();
+          this.updateStatsUI();
+          this.openLeaderboard();
+        }
+      }
+
+      bindEvents() {
+        // Change Detective
+        this.dom.btnChangeDetective.addEventListener('click', () => {
+          audio.click();
+          this.dom.modalSelectDetective.classList.remove('hidden');
+        });
+
+        // Step 1 to Step 2
+        this.dom.btnNextStep.addEventListener('click', () => this.handleProceedToStep2());
+
+        // Tag buttons
+        this.dom.tagButtons.forEach(btn => {
+          btn.addEventListener('click', () => this.handleTagSelect(btn.dataset.tag, btn));
+        });
+
+        // Next case button
+        this.dom.btnNextCase.addEventListener('click', () => this.nextCase());
+
+        // Filters
+        this.dom.filterButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            audio.click();
+            this.applyFilter(btn.dataset.filter);
+          });
+        });
+
+        // Leaderboard modal
+        this.dom.btnLeaderboard.addEventListener('click', () => this.openLeaderboard());
+        this.dom.btnCloseLeaderboard.addEventListener('click', () => {
+          audio.click();
+          this.dom.modalLeaderboard.classList.add('hidden');
+        });
+
+        // Reset scores
+        this.dom.btnResetScores.addEventListener('click', () => this.resetScores());
+
+        // Notebook modal
+        this.dom.btnNotebook.addEventListener('click', () => {
+          audio.click();
+          this.dom.modalNotebook.classList.remove('hidden');
+        });
+        this.dom.btnCloseNotebook.addEventListener('click', () => {
+          audio.click();
+          this.dom.modalNotebook.classList.add('hidden');
+        });
+
+        // Form Add Case
+        this.dom.formAddCase.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const category = document.getElementById('input-category').value;
+          const student = document.getElementById('input-student').value;
+          const problem = document.getElementById('input-problem').value.trim();
+          const rawSteps = document.getElementById('input-steps').value.trim().split('\n').filter(s => s.trim().length > 0);
+          const errorStep = parseInt(document.getElementById('input-error-step').value);
+          const errorTag = document.getElementById('input-error-tag').value;
+          const advice = document.getElementById('input-advice').value.trim();
+
+          const catMap = {
+            decimal: "Số thập phân",
+            triangle: "Diện tích tam giác",
+            circle: "Hình tròn",
+            trapezoid: "Diện tích hình thang"
+          };
+
+          const newCase = {
+            id: "case-custom-" + Date.now(),
+            category,
+            categoryName: catMap[category] || "Toán 5",
+            student,
+            problem,
+            steps: rawSteps.map((txt, idx) => ({ num: idx + 1, text: txt })),
+            errorStep,
+            errorTag,
+            advice
+          };
+
+          this.cases.push(newCase);
+          this.saveCases();
+          alert("Thầy Huy đã thêm bài tập mới thành công!");
+          this.dom.formAddCase.reset();
+          this.dom.modalNotebook.classList.add('hidden');
+          this.applyFilter(this.filter);
+        });
+
+        // Export JSON
+        this.dom.btnExportJson.addEventListener('click', () => {
+          const blob = new Blob([JSON.stringify(this.cases, null, 2)], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = "kmath_lop5_bai_tap_loi_sai.json";
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+      }
+    }
+
+    // Launch Game on Window Load
+    window.addEventListener('DOMContentLoaded', () => {
+      new MathDetectiveApp();
+    });
+  </script>
+</body>
+</html>
